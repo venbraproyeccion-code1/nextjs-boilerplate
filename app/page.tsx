@@ -1,65 +1,107 @@
-import Image from "next/image";
+"use client";
+import { useState, useEffect, useRef } from "react";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
-}
+const LANGS: Record<string, {code:string;flag:string}> = {en:{code:"EN",flag:"🇺🇸"},es:{code:"ES",flag:"🇪🇸"},pt:{code:"PT",flag:"🇧🇷"},fr:{code:"FR",flag:"🇫🇷"},de:{code:"DE",flag:"🇩🇪"},zh:{code:"ZH",flag:"🇨🇳"},ja:{code:"JA",flag:"🇯🇵"},ar:{code:"AR",flag:"🇸🇦"}};
+
+const T: Record<string, Record<string, any>> = {
+en:{tagline:"Institutional-Grade Referral Platform",h1:"Your Gateway to",h2:"Regulated Investing",desc:"Access ETFs, fractional real estate, and diversified portfolios through trusted, SEC-regulated platforms. Education first, always.",start:"Start Learning",explore:"Explore",scroll:"Scroll",s1:"Assets on Partner Platforms",s2:"Regulated Platforms",s3:"Minimum Investment",s4:"Platform Access",pt:"Trusted Partners",pt1:"Regulated Platforms,",pt2:"Curated for You",etoro:"Access BlackRock iShares ETFs, global equities, and diversified portfolios through one of the world's leading regulated trading platforms.",arrived:"Invest in residential rental properties starting from $100. Earn passive income through fractional ownership of carefully selected homes.",fundrise:"Access institutional-quality real estate investments previously available only to the ultra-wealthy.",more:"Learn More",proc:"Process",pr1:"Three Steps to",pr2:"Smarter Investing",l:"Learn",ld:"Access free educational content about investment fundamentals, asset classes, and wealth-building strategies.",e:"Explore",ed:"Discover regulated platforms curated to match your investment goals and risk tolerance.",st:"Start",sd:"Begin your investment journey through trusted, SEC-regulated platforms with full transparency.",ct:"Begin Your Journey",ct1:"Start Your",ct2:"Financial Education",ctd:"Join our community of informed investors. Receive weekly insights on ETFs, real estate, and portfolio strategies.",ph:"Enter your email",sub:"Subscribe",thx:"Welcome aboard. Check your inbox.",dis:"VenBra Tech operates exclusively as a referral and education platform. We are not registered investment advisors, broker-dealers, or financial planners. All investments carry risk, including potential loss of capital. Past performance does not guarantee future results. Always consult a registered financial advisor before making investment decisions.",dl:"Disclaimer:",fd:"Institutional-grade investment education and regulated platform referrals.",n:["Platform","Education","About"],gs:"Get Started",ef:["BlackRock iShares ETFs","Global Stock Markets","Regulated & Insured","CopyTrading Technology"],af:["From $100 Minimum","Rental Income","SEC-Qualified","Professionally Managed"],ff:["Multiple Fund Options","Commercial & Residential","Low Minimums","Quarterly Dividends"]},
+es:{tagline:"Plataforma de Referidos Institucional",h1:"Tu Puerta a la",h2:"Inversión Regulada",desc:"Accede a ETFs, bienes raíces fraccionados y portafolios diversificados a través de plataformas reguladas. Educación primero, siempre.",start:"Empezar",explore:"Explorar",scroll:"Desplazar",s1:"Activos en Plataformas",s2:"Plataformas Reguladas",s3:"Inversión Mínima",s4:"Acceso 24/7",pt:"Socios de Confianza",pt1:"Plataformas Reguladas,",pt2:"Seleccionadas para Ti",etoro:"Accede a ETFs BlackRock, acciones globales y portafolios diversificados.",arrived:"Invierte en propiedades desde $100. Ingresos pasivos por propiedad fraccionada.",fundrise:"Inversiones inmobiliarias de calidad institucional.",more:"Saber Más",proc:"Proceso",pr1:"Tres Pasos para",pr2:"Invertir Mejor",l:"Aprende",ld:"Contenido educativo gratuito sobre fundamentos de inversión.",e:"Explora",ed:"Plataformas reguladas para tus objetivos.",st:"Comienza",sd:"Inicia tu viaje con transparencia total.",ct:"Comienza Tu Viaje",ct1:"Inicia Tu",ct2:"Educación Financiera",ctd:"Únete a nuestra comunidad de inversores informados.",ph:"Tu email",sub:"Suscribirse",thx:"Bienvenido. Revisa tu bandeja.",dis:"VenBra Tech actúa exclusivamente como plataforma de referidos y educación. No somos asesores de inversión registrados. Todas las inversiones conllevan riesgo. Consulte siempre a un asesor financiero registrado.",dl:"Aviso Legal:",fd:"Educación de inversión y referidos a plataformas reguladas.",n:["Plataformas","Educación","Acerca de"],gs:"Comenzar",ef:["ETFs BlackRock","Mercados Globales","Regulado","CopyTrading"],af:["Desde $100","Ingresos por Alquiler","SEC","Gestión Pro"],ff:["Múltiples Fondos","Comercial y Residencial","Bajos Mínimos","Dividendos"]},
+pt:{tagline:"Plataforma de Referências Institucional",h1:"Sua Porta para",h2:"Investimento Regulado",desc:"Acesse ETFs e imóveis fracionados através de plataformas reguladas.",start:"Começar",explore:"Explorar",scroll:"Rolar",s1:"Ativos em Plataformas",s2:"Plataformas Reguladas",s3:"Investimento Mínimo",s4:"Acesso 24/7",pt:"Parceiros",pt1:"Plataformas Reguladas,",pt2:"Selecionadas para Você",etoro:"ETFs BlackRock e ações globais.",arrived:"Invista em imóveis a partir de $100.",fundrise:"Investimentos imobiliários institucionais.",more:"Saiba Mais",proc:"Processo",pr1:"Três Passos para",pr2:"Investir Melhor",l:"Aprenda",ld:"Conteúdo educativo gratuito.",e:"Explore",ed:"Plataformas para seus objetivos.",st:"Comece",sd:"Inicie sua jornada com transparência.",ct:"Comece Sua Jornada",ct1:"Inicie Sua",ct2:"Educação Financeira",ctd:"Junte-se à nossa comunidade.",ph:"Seu email",sub:"Inscrever-se",thx:"Bem-vindo.",dis:"VenBra Tech atua como plataforma de referências e educação. Consulte um consultor financeiro.",dl:"Aviso Legal:",fd:"Educação de investimento regulada.",n:["Plataformas","Educação","Sobre"],gs:"Começar",ef:["ETFs BlackRock","Mercados","Regulado","CopyTrading"],af:["A partir de $100","Renda","SEC","Gestão Pro"],ff:["Múltiplos Fundos","Comercial","Baixos Mínimos","Dividendos"]},
+fr:{tagline:"Plateforme Institutionnelle",h1:"Votre Porte vers",h2:"l'Investissement Régulé",desc:"Accédez aux ETFs via des plateformes régulées.",start:"Commencer",explore:"Explorer",scroll:"Défiler",s1:"Actifs Partenaires",s2:"Plateformes",s3:"Investissement Min.",s4:"Accès 24/7",pt:"Partenaires",pt1:"Plateformes Régulées,",pt2:"Pour Vous",etoro:"ETFs BlackRock et actions.",arrived:"Immobilier dès 100$.",fundrise:"Investissements institutionnels.",more:"En Savoir Plus",proc:"Processus",pr1:"Trois Étapes",pr2:"Investir Mieux",l:"Apprenez",ld:"Contenu éducatif gratuit.",e:"Explorez",ed:"Plateformes adaptées.",st:"Commencez",sd:"Démarrez via des plateformes régulées.",ct:"Commencez",ct1:"Démarrez",ct2:"Votre Éducation",ctd:"Rejoignez notre communauté.",ph:"Votre email",sub:"S'inscrire",thx:"Bienvenue.",dis:"VenBra Tech est une plateforme de référencement. Consultez un conseiller.",dl:"Avertissement:",fd:"Éducation institutionnelle.",n:["Plateformes","Éducation","À Propos"],gs:"Commencer",ef:["BlackRock","Marchés","Régulé","CopyTrading"],af:["Dès 100$","Revenus","SEC","Pro"],ff:["Fonds","Commercial","Bas","Dividendes"]},
+de:{tagline:"Institutionelle Plattform",h1:"Ihr Tor zu",h2:"Reguliertem Investieren",desc:"Zugang zu ETFs über regulierte Plattformen.",start:"Starten",explore:"Entdecken",scroll:"Scrollen",s1:"Partneraktiva",s2:"Plattformen",s3:"Mindestanlage",s4:"24/7",pt:"Partner",pt1:"Regulierte Plattformen,",pt2:"Für Sie",etoro:"BlackRock ETFs.",arrived:"Ab 100$ investieren.",fundrise:"Institutionelle Investments.",more:"Mehr",proc:"Prozess",pr1:"Drei Schritte",pr2:"Besser Investieren",l:"Lernen",ld:"Kostenlose Bildung.",e:"Entdecken",ed:"Passende Plattformen.",st:"Starten",sd:"Investmentreise beginnen.",ct:"Beginnen",ct1:"Starten Sie",ct2:"Ihre Finanzbildung",ctd:"Wöchentliche Einblicke.",ph:"Ihre E-Mail",sub:"Abonnieren",thx:"Willkommen.",dis:"VenBra Tech ist eine Empfehlungsplattform. Konsultieren Sie einen Berater.",dl:"Haftungsausschluss:",fd:"Institutionelle Bildung.",n:["Plattformen","Bildung","Über Uns"],gs:"Starten",ef:["BlackRock","Märkte","Reguliert","CopyTrading"],af:["Ab 100$","Miete","SEC","Pro"],ff:["Fonds","Gewerbe","Niedrig","Dividenden"]},
+zh:{tagline:"机构级推荐平台",h1:"通往",h2:"受监管投资的大门",desc:"通过受监管平台获取ETF和房地产。",start:"开始学习",explore:"探索",scroll:"滚动",s1:"合作平台资产",s2:"受监管平台",s3:"最低投资",s4:"全天访问",pt:"合作伙伴",pt1:"受监管平台，",pt2:"为您精选",etoro:"贝莱德ETF和全球股票。",arrived:"从100美元起投资房地产。",fundrise:"机构级房地产投资。",more:"了解更多",proc:"流程",pr1:"三步实现",pr2:"更明智的投资",l:"学习",ld:"免费教育内容。",e:"探索",ed:"适合您的平台。",st:"开始",sd:"通过受监管平台开始。",ct:"开始旅程",ct1:"开始您的",ct2:"金融教育",ctd:"加入投资者社区。",ph:"您的邮箱",sub:"订阅",thx:"欢迎。",dis:"VenBra Tech仅作为推荐平台。请咨询财务顾问。",dl:"免责声明：",fd:"机构级投资教育。",n:["平台","教育","关于"],gs:"开始",ef:["贝莱德","全球","受监管","跟单"],af:["100美元","租金","SEC","专业"],ff:["多基金","商住","低门槛","分红"]},
+ja:{tagline:"機関グレードプラットフォーム",h1:"規制投資への",h2:"ゲートウェイ",desc:"規制プラットフォームでETFにアクセス。",start:"学習開始",explore:"探索",scroll:"スクロール",s1:"パートナー資産",s2:"規制プラットフォーム",s3:"最低投資額",s4:"24/7",pt:"パートナー",pt1:"規制プラットフォーム、",pt2:"厳選",etoro:"ブラックロックETF。",arrived:"100ドルから不動産投資。",fundrise:"機関品質投資。",more:"詳細",proc:"プロセス",pr1:"3ステップで",pr2:"賢い投資",l:"学ぶ",ld:"無料教育コンテンツ。",e:"探す",ed:"目標に合ったプラットフォーム。",st:"始める",sd:"規制プラットフォームで開始。",ct:"旅を始める",ct1:"あなたの",ct2:"金融教育",ctd:"投資家コミュニティに参加。",ph:"メール",sub:"購読",thx:"ようこそ。",dis:"VenBra Techは紹介プラットフォームです。",dl:"免責事項：",fd:"機関級教育。",n:["プラットフォーム","教育","会社情報"],gs:"始める",ef:["ブラックロック","グローバル","規制済","コピー"],af:["100ドル","賃料","SEC","プロ"],ff:["ファンド","商住","低額","配当"]},
+ar:{tagline:"منصة إحالة مؤسسية",h1:"بوابتك إلى",h2:"الاستثمار المنظم",desc:"الوصول إلى صناديق الاستثمار عبر منصات منظمة.",start:"ابدأ",explore:"استكشف",scroll:"مرر",s1:"أصول الشركاء",s2:"منصات منظمة",s3:"الحد الأدنى",s4:"24/7",pt:"شركاء",pt1:"منصات منظمة،",pt2:"مختارة لك",etoro:"صناديق بلاك روك.",arrived:"استثمر من 100 دولار.",fundrise:"استثمارات مؤسسية.",more:"المزيد",proc:"العملية",pr1:"ثلاث خطوات",pr2:"استثمار أذكى",l:"تعلم",ld:"محتوى تعليمي مجاني.",e:"استكشف",ed:"منصات تناسب أهدافك.",st:"ابدأ",sd:"ابدأ رحلتك.",ct:"ابدأ رحلتك",ct1:"ابدأ",ct2:"تعليمك المالي",ctd:"انضم للمستثمرين.",ph:"بريدك",sub:"اشترك",thx:"مرحباً.",dis:"VenBra Tech منصة إحالة فقط. استشر مستشاراً.",dl:"إخلاء مسؤولية:",fd:"تعليم استثماري.",n:["المنصات","التعليم","عن"],gs:"ابدأ",ef:["بلاك روك","أسواق","منظمة","نسخ"],af:["100$","إيجار","SEC","إدارة"],ff:["صناديق","تجاري","منخفضة","أرباح"]}
+};
+
+function useInView(th=0.15){const r=useRef<HTMLDivElement>(null);const[v,s]=useState(false);useEffect(()=>{const el=r.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:th});o.observe(el);return()=>o.disconnect()},[th]);return[r,v] as const}
+function FI({children,delay=0}:{children:React.ReactNode;delay?:number}){const[r,v]=useInView();return<div ref={r} style={{opacity:v?1:0,transform:v?"translateY(0)":"translateY(32px)",transition:`opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`}}>{children}</div>}
+
+export default function Home(){
+const[lang,setLang]=useState("en");const[open,setOpen]=useState(false);const[email,setEmail]=useState("");const[done,setDone]=useState(false);const[sc,setSc]=useState(false);const t=T[lang];
+useEffect(()=>{const h=()=>setSc(window.scrollY>60);window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h)},[]);
+const C={black:"#0a0a0a",dark:"#0d1117",accent:"#c5a455",accentL:"#d4b76a",white:"#f8f8f8",gray:"#8b8b8b",lgray:"#c4c4c4",border:"rgba(197,164,85,0.15)",card:"rgba(20,28,46,0.6)"};
+const platforms=[{name:"eToro",tag:"ETFs & Global Markets",d:t.etoro,f:t.ef},{name:"Arrived Homes",tag:"Fractional Real Estate",d:t.arrived,f:t.af},{name:"Fundrise",tag:"Real Estate Crowdfunding",d:t.fundrise,f:t.ff}];
+const steps=[{n:"01",t:t.l,d:t.ld},{n:"02",t:t.e,d:t.ed},{n:"03",t:t.st,d:t.sd}];
+
+return<div dir={lang==="ar"?"rtl":"ltr"} style={{background:C.black}}>
+<style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{overflow-x:hidden}::selection{background:rgba(197,164,85,0.27)}input::placeholder{color:#8b8b8b}@media(max-width:768px){.hm{display:none!important}.g3{grid-template-columns:1fr!important}.g4{grid-template-columns:repeat(2,1fr)!important}.fc{flex-direction:column!important}}`}</style>
+
+<div style={{position:"fixed",top:0,left:0,width:"100%",height:"100%",backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")`,pointerEvents:"none",zIndex:9999,opacity:0.5}}/>
+
+<nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,background:sc?"rgba(10,10,10,0.92)":"transparent",backdropFilter:sc?"blur(20px)":"none",borderBottom:sc?`1px solid ${C.border}`:"none",transition:"all .5s",padding:"0 5%"}}>
+<div style={{maxWidth:1280,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",height:72}}>
+<div style={{display:"flex",alignItems:"center",gap:10}}>
+<div style={{width:36,height:36,border:`2px solid ${C.accent}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cormorant Garamond',serif",fontWeight:700,fontSize:18,color:C.accent}}>V</div>
+<span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:C.white,letterSpacing:2}}>VENBRA TECH</span>
+</div>
+<div style={{display:"flex",gap:28,alignItems:"center"}}>
+{t.n.map((x:string,i:number)=><a key={i} href={`#${["platform","education","about"][i]}`} className="hm" style={{color:C.lgray,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:2,textTransform:"uppercase"}}>{x}</a>)}
+<div style={{position:"relative"}}><button onClick={()=>setOpen(!open)} style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.05)",border:`1px solid ${C.border}`,color:C.lgray,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12}}>{LANGS[lang].flag} {LANGS[lang].code} ▼</button>
+{open&&<div style={{position:"absolute",top:"100%",right:0,marginTop:4,background:C.dark,border:`1px solid ${C.border}`,zIndex:200,minWidth:180}}>{Object.entries(LANGS).map(([c,l])=><button key={c} onClick={()=>{setLang(c);setOpen(false)}} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"10px 16px",border:"none",cursor:"pointer",background:lang===c?`${C.accent}15`:"transparent",color:lang===c?C.accent:C.lgray,fontFamily:"'DM Sans',sans-serif",fontSize:13,textAlign:"left"}}>{l.flag} {({en:"English",es:"Español",pt:"Português",fr:"Français",de:"Deutsch",zh:"中文",ja:"日本語",ar:"العربية"} as Record<string,string>)[c]}</button>)}</div>}
+</div>
+<a href="#start" className="hm" style={{padding:"10px 28px",border:`1px solid ${C.accent}`,color:C.accent,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:2.5,textTransform:"uppercase"}}>{t.gs}</a>
+</div></div></nav>
+
+<section style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",background:`radial-gradient(ellipse at 50% 50%,rgba(197,164,85,0.06),transparent 50%),linear-gradient(180deg,${C.black},${C.dark})`,position:"relative",overflow:"hidden",padding:"0 5%",textAlign:"center"}}>
+<div style={{position:"absolute",top:"50%",left:"50%",width:600,height:600,border:`1px solid ${C.accent}08`,borderRadius:"50%",transform:"translate(-50%,-50%)"}}/>
+<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:6,color:C.accent,textTransform:"uppercase",marginBottom:40}}>{t.tagline}</div></FI>
+<FI delay={0.15}><h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,7vw,88px)",fontWeight:300,color:C.white,lineHeight:1.05,maxWidth:900}}>{t.h1}<br/><span style={{fontWeight:600,color:C.accent}}>{t.h2}</span></h1></FI>
+<FI delay={0.3}><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:17,color:C.gray,lineHeight:1.7,maxWidth:560,margin:"36px auto 48px"}}>{t.desc}</p></FI>
+<FI delay={0.45}><div style={{display:"flex",gap:20,flexWrap:"wrap",justifyContent:"center"}}>
+<a href="#start" style={{padding:"16px 48px",background:C.accent,color:C.black,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:2,textTransform:"uppercase",fontWeight:600}}>{t.start}</a>
+<a href="#platform" style={{padding:"16px 48px",border:`1px solid ${C.gray}44`,color:C.lgray,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:2,textTransform:"uppercase"}}>{t.explore}</a>
+</div></FI>
+</section>
+
+<section style={{padding:"80px 5%",background:C.dark,borderTop:`1px solid ${C.border}`,borderBottom:`1px solid ${C.border}`}}>
+<div className="g4" style={{maxWidth:1280,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:40}}>
+{[{v:"$10T+",l:t.s1},{v:"3",l:t.s2},{v:"$100",l:t.s3},{v:"24/7",l:t.s4}].map((s,i)=><FI key={i} delay={i*0.1}><div style={{textAlign:"center"}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:48,fontWeight:300,color:C.accent,lineHeight:1}}>{s.v}</div><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:3,color:C.gray,textTransform:"uppercase",marginTop:12}}>{s.l}</div></div></FI>)}
+</div></section>
+
+<section id="platform" style={{padding:"120px 5%",background:`linear-gradient(180deg,${C.dark},${C.black})`}}>
+<div style={{maxWidth:1280,margin:"0 auto"}}>
+<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:5,color:C.accent,textTransform:"uppercase",marginBottom:20}}>{t.pt}</div></FI>
+<FI delay={0.1}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(32px,4vw,56px)",fontWeight:300,color:C.white,margin:"0 0 60px",lineHeight:1.15}}>{t.pt1}<br/><span style={{fontWeight:600}}>{t.pt2}</span></h2></FI>
+<div className="g3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24}}>
+{platforms.map((p,i)=><FI key={i} delay={0.15+i*0.12}><div style={{background:C.card,border:`1px solid ${C.border}`,padding:40,backdropFilter:"blur(10px)",position:"relative",overflow:"hidden",height:"100%"}}>
+<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,${C.accent}66,transparent)`}}/>
+<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:3,color:C.accent,textTransform:"uppercase",marginBottom:16}}>{p.tag}</div>
+<h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:C.white,margin:"0 0 16px"}}>{p.name}</h3>
+<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.gray,lineHeight:1.7,margin:"0 0 28px"}}>{p.d}</p>
+{p.f.map((f:string,j:number)=><div key={j} style={{display:"flex",alignItems:"center",gap:10,fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.lgray,marginBottom:10}}><div style={{width:5,height:5,background:C.accent,borderRadius:"50%",flexShrink:0}}/>{f}</div>)}
+<div style={{marginTop:32,paddingTop:24,borderTop:`1px solid ${C.border}`}}><a href="#start" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:2,color:C.accent,textTransform:"uppercase",textDecoration:"none"}}>{t.more} →</a></div>
+</div></FI>)}
+</div></div></section>
+
+<section id="education" style={{padding:"120px 5%",background:C.black}}>
+<div style={{maxWidth:1280,margin:"0 auto"}}>
+<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:5,color:C.accent,textTransform:"uppercase",marginBottom:20}}>{t.proc}</div></FI>
+<FI delay={0.1}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(32px,4vw,56px)",fontWeight:300,color:C.white,margin:"0 0 80px",lineHeight:1.15}}>{t.pr1}<br/><span style={{fontWeight:600}}>{t.pr2}</span></h2></FI>
+<div className="g3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:60}}>
+{steps.map((s,i)=><FI key={i} delay={0.15+i*0.15}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:72,fontWeight:300,color:`${C.accent}22`,lineHeight:1,marginBottom:20}}>{s.n}</div><h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:600,color:C.white,margin:"0 0 16px"}}>{s.t}</h3><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.gray,lineHeight:1.8}}>{s.d}</p></div></FI>)}
+</div></div></section>
+
+<section id="start" style={{padding:"120px 5%",background:`linear-gradient(180deg,${C.black},${C.dark} 50%,${C.black})`,position:"relative"}}>
+<div style={{position:"absolute",top:"50%",left:"50%",width:500,height:500,background:`radial-gradient(circle,${C.accent}08,transparent 70%)`,transform:"translate(-50%,-50%)",borderRadius:"50%"}}/>
+<div style={{maxWidth:640,margin:"0 auto",textAlign:"center",position:"relative"}}>
+<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:5,color:C.accent,textTransform:"uppercase",marginBottom:20}}>{t.ct}</div></FI>
+<FI delay={0.1}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(32px,4vw,48px)",fontWeight:300,color:C.white,margin:"0 0 20px",lineHeight:1.2}}>{t.ct1} <span style={{fontWeight:600}}>{t.ct2}</span></h2></FI>
+<FI delay={0.2}><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,color:C.gray,lineHeight:1.7,margin:"0 0 40px"}}>{t.ctd}</p></FI>
+<FI delay={0.3}>{!done?<div style={{display:"flex",gap:0,maxWidth:480,margin:"0 auto",flexWrap:"wrap"}}>
+<input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder={t.ph} style={{flex:1,minWidth:200,padding:"16px 20px",background:"rgba(255,255,255,0.05)",border:`1px solid ${C.border}`,borderRight:"none",color:C.white,fontFamily:"'DM Sans',sans-serif",fontSize:14,outline:"none"}}/>
+<button onClick={()=>{if(email.includes("@"))setDone(true)}} style={{padding:"16px 32px",background:C.accent,border:"none",color:C.black,fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:2,textTransform:"uppercase",fontWeight:600,cursor:"pointer"}}>{t.sub}</button>
+</div>:<div style={{padding:"20px 32px",border:`1px solid ${C.accent}44`,fontFamily:"'DM Sans',sans-serif",fontSize:15,color:C.accent}}>{t.thx}</div>}</FI>
+</div></section>
+
+<footer id="about" style={{padding:"60px 5% 40px",background:C.black,borderTop:`1px solid ${C.border}`}}>
+<div style={{maxWidth:1280,margin:"0 auto"}}>
+<div className="fc" style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:48,flexWrap:"wrap",gap:40}}>
+<div><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><div style={{width:32,height:32,border:`1.5px solid ${C.accent}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cormorant Garamond',serif",fontWeight:700,fontSize:16,color:C.accent}}>V</div><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:600,color:C.white,letterSpacing:2}}>VENBRA TECH</span></div><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.gray,maxWidth:300,lineHeight:1.6}}>{t.fd}</p></div>
+<div style={{display:"flex",gap:60,flexWrap:"wrap"}}>{[{t:t.n[0],l:["eToro","Arrived Homes","Fundrise"]},{t:t.n[1],l:["Blog","FAQ","Guides"]},{t:"Legal",l:["Privacy Policy","Terms","Disclaimer"]}].map((c,i)=><div key={i}><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:3,color:C.accent,textTransform:"uppercase",marginBottom:16}}>{c.t}</div>{c.l.map((x,j)=><a key={j} href="#" style={{display:"block",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.gray,textDecoration:"none",marginBottom:10}}>{x}</a>)}</div>)}</div>
+</div>
+<div style={{padding:"24px 0",marginTop:24,borderTop:`1px solid ${C.border}`}}>
+<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray,lineHeight:1.8,margin:"0 0 16px",maxWidth:900}}><span style={{color:C.accent,fontWeight:600}}>{t.dl}</span> {t.dis}</p>
+<div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:16}}><span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(139,139,139,0.53)"}}>© 2026 VenBra Tech</span><span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(139,139,139,0.53)"}}>alfonso@venbratech.com</span></div>
+</div></div></footer>
+</div>}
