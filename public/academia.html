@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VenBraX Academy — Acceso a la Comunidad</title>
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0C040;
+    --dark: #0A0A0A;
+    --dark2: #111111;
+    --dark3: #1A1A1A;
+    --border: #2A2A2A;
+    --text: #E8E8E8;
+    --muted: #888;
+    --success: #22C55E;
+    --error: #EF4444;
+    --cyan: #06B6D4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1000 100%);
+    border-bottom: 1px solid var(--gold);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .logo-text {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .logo-sub { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.1em; }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    background: radial-gradient(ellipse at top, #1A0F00 0%, var(--dark) 70%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p { color: var(--muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem; }
+  .badge {
+    display: inline-block;
+    background: #1A0F00;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  /* ── GATING STEPS ── */
+  .gating-section {
+    max-width: 780px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+  .gating-title {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .step-card {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .step-card.active { border-color: var(--gold); }
+  .step-card.done { border-color: var(--success); }
+  .step-num {
+    position: absolute;
+    top: -12px; left: 20px;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    text-transform: uppercase;
+  }
+  .step-card.done .step-num { color: var(--success); border-color: var(--success); }
+  .step-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .step-card h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--text); }
+  .step-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  .step-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .step-btn-gold {
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    color: #000;
+  }
+  .step-btn-gold:hover { opacity: 0.85; }
+  .step-btn-outline {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+  }
+  .step-btn-outline:hover { background: #1A0F00; }
+  .step-check {
+    display: none;
+    color: var(--success);
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+  }
+  .step-card.done .step-check { display: block; }
+  .step-card.done .step-btn { display: none; }
+
+  /* ── REGISTRO FORM ── */
+  .form-container {
+    background: var(--dark2);
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 520px;
+    margin: 0 auto 3rem;
+  }
+  .form-container h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--gold);
+  }
+  .form-container p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
+  .radio-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .radio-opt {
+    flex: 1;
+    min-width: 100px;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .radio-opt input { display: none; }
+  .radio-opt.selected { border-color: var(--gold); color: var(--gold); background: #1A0F00; }
+  .submit-btn {
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    color: #000;
+    transition: opacity 0.2s;
+  }
+  .submit-btn:hover { opacity: 0.85; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .msg { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; }
+  .msg.success { background: #052e16; border: 1px solid var(--success); color: var(--success); }
+  .msg.error   { background: #450a0a; border: 1px solid var(--error); color: var(--error); }
+
+  /* ── MATERIAL LOCKED ── */
+  .material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 780px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem;
+  }
+  .material-card {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    opacity: 0.4;
+    position: relative;
+  }
+  .material-card.unlocked { opacity: 1; border-color: var(--gold); }
+  .lock-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .material-card h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .material-card p { font-size: 0.8rem; color: var(--muted); }
+  .material-card a {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--gold);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .material-card a:hover { text-decoration: underline; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo-text">VENBRAX</div>
+    <div class="logo-sub">ACADEMY · COMUNIDAD</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">⚡ Acceso Exclusivo · Comunidad Verificada</div>
+  <h1>El material gratuito<br>no es para <span>todos</span>.</h1>
+  <p>Es para quienes están comprometidos. Completa los 3 pasos y desbloquea el ecosistema completo: guías, señales, herramientas y comunidad.</p>
+</section>
+
+<!-- PASOS GATING -->
+<div class="gating-section">
+  <p class="gating-title">3 pasos · orden obligatorio</p>
+  <div class="steps-grid">
+
+    <div class="step-card" id="step1-card">
+      <div class="step-num">Paso 1</div>
+      <div class="step-icon">📡</div>
+      <h3>Sigue la red de origen</h3>
+      <p>Síguenos en la red donde encontraste este link (Instagram, TikTok, YouTube o LinkedIn).</p>
+      <div class="radio-group" style="margin-top:0.75rem;">
+        <label class="radio-opt" onclick="selectRed(this,'instagram')"><input type="radio" name="red" value="instagram">📸 Instagram</label>
+        <label class="radio-opt" onclick="selectRed(this,'tiktok')"><input type="radio" name="red" value="tiktok">🎵 TikTok</label>
+        <label class="radio-opt" onclick="selectRed(this,'youtube')"><input type="radio" name="red" value="youtube">▶️ YouTube</label>
+        <label class="radio-opt" onclick="selectRed(this,'linkedin')"><input type="radio" name="red" value="linkedin">💼 LinkedIn</label>
+      </div>
+      <button class="step-btn step-btn-gold" onclick="confirmStep1()" style="margin-top:1rem;">Confirmar seguimiento ✓</button>
+      <div class="step-check">✅ Red confirmada</div>
+    </div>
+
+    <div class="step-card" id="step2-card">
+      <div class="step-num">Paso 2</div>
+      <div class="step-icon">🌐</div>
+      <h3>Regístrate en venbratech.com</h3>
+      <p>Completa el formulario de registro oficial. Tu email es tu llave de acceso al ecosistema.</p>
+      <button class="step-btn step-btn-outline" onclick="scrollToForm()">Completar registro ↓</button>
+      <div class="step-check">✅ Registro completado</div>
+    </div>
+
+    <div class="step-card" id="step3-card">
+      <div class="step-num">Paso 3</div>
+      <div class="step-icon">✈️</div>
+      <h3>Únete al canal Telegram</h3>
+      <p>El canal privado donde se publican señales, alertas y material exclusivo primero.</p>
+      <a class="step-btn step-btn-gold" href="https://t.me/venbratech" target="_blank" onclick="markStep3()">Unirme al canal →</a>
+      <div class="step-check">✅ En Telegram</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FORMULARIO REGISTRO -->
+<div class="form-container" id="registro-form">
+  <h2>Registro Oficial</h2>
+  <p>Paso 2 de 3 · Tu email activa el acceso. Sin spam.</p>
+
+  <div class="form-group">
+    <label>Nombre</label>
+    <input type="text" id="f-nombre" placeholder="Tu nombre">
+  </div>
+  <div class="form-group">
+    <label>Email *</label>
+    <input type="email" id="f-email" placeholder="tu@email.com" required>
+  </div>
+  <div class="form-group">
+    <label>País</label>
+    <input type="text" id="f-pais" placeholder="Colombia, Venezuela, España...">
+  </div>
+  <div class="form-group">
+    <label>¿Qué te interesa más?</label>
+    <select id="f-interes">
+      <option value="">Selecciona...</option>
+      <option value="inversiones">📈 Inversiones y finanzas</option>
+      <option value="ia_automatizacion">🤖 IA y automatización</option>
+      <option value="trading">📊 Trading</option>
+      <option value="emprendimiento">🚀 Emprendimiento digital</option>
+      <option value="contenido">🎥 Creación de contenido</option>
+      <option value="todo">✨ Todo lo anterior</option>
+    </select>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="registrar()">
+    Completar Registro · Paso 2/3
+  </button>
+  <div id="form-msg"></div>
+</div>
+
+<!-- MATERIAL (bloqueado hasta acceso) -->
+<div class="gating-section" style="margin-top:0;">
+  <p class="gating-title" style="margin-bottom:1rem;">🔒 Material disponible al completar los 3 pasos</p>
+</div>
+<div class="material-grid" id="material-grid">
+  <div class="material-card" id="mat-1">
+    <div class="lock-icon">🔒</div>
+    <h4>Guía: Inversión desde $0</h4>
+    <p>PDF · 47 páginas · Actualizado 2026</p>
+  </div>
+  <div class="material-card" id="mat-2">
+    <div class="lock-icon">🔒</div>
+    <h4>Señales Semanales</h4>
+    <p>Análisis técnico + fundamentales cada lunes</p>
+  </div>
+  <div class="material-card" id="mat-3">
+    <div class="lock-icon">🔒</div>
+    <h4>Kit IA sin código</h4>
+    <p>Plantillas n8n + prompts probados</p>
+  </div>
+  <div class="material-card" id="mat-4">
+    <div class="lock-icon">🔒</div>
+    <h4>VenBra AI Content Machine</h4>
+    <p>Precio fundador $97 · Acceso vitalicio</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 VenBraTech · <a href="https://venbratech.com" target="_blank">venbratech.com</a> · Comunidad de Latinos en el ecosistema digital</p>
+  <p style="margin-top:0.5rem;">Material educativo · No es asesoría financiera ni de inversión</p>
+</footer>
+
+<script>
+// ── CONFIG SUPABASE ────────────────────────────────────────
+const SUPABASE_URL  = 'https://xshannxyjzrhgnsqmhun.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaGFubnh5anpyaGduc3FtaHVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDcwODUsImV4cCI6MjA5MTU4MzA4NX0.l6wJsUAYSVE6RAZn-unPPMsGprrzXmBHy7y7wHrWfBw';
+
+// ── STATE ──────────────────────────────────────────────────
+const state = {
+  paso1: false,
+  paso2: false,
+  paso3: false,
+  red: null,
+  email: null,
+  memberId: null,
+};
+
+// Recuperar estado de sesión
+try {
+  const saved = JSON.parse(localStorage.getItem('vb_gating') || '{}');
+  Object.assign(state, saved);
+  renderState();
+} catch(e) {}
+
+function saveState() {
+  localStorage.setItem('vb_gating', JSON.stringify(state));
+}
+
+// ── PASO 1: Red ───────────────────────────────────────────
+function selectRed(el, red) {
+  document.querySelectorAll('.radio-opt').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+  state.red = red;
+}
+
+function confirmStep1() {
+  if (!state.red) { alert('Selecciona tu red primero.'); return; }
+  state.paso1 = true;
+  saveState();
+  renderState();
+}
+
+// ── PASO 2: Registro ──────────────────────────────────────
+function scrollToForm() {
+  document.getElementById('registro-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function registrar() {
+  const email  = document.getElementById('f-email').value.trim();
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const pais   = document.getElementById('f-pais').value.trim();
+  const interes = document.getElementById('f-interes').value;
+
+  if (!email || !email.includes('@')) {
+    showMsg('error', 'Ingresa un email válido.');
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Registrando...';
+
+  try {
+    // Determinar UTM source
+    const utm = new URLSearchParams(window.location.search).get('utm_source') || state.red || 'direct';
+
+    const payload = {
+      email,
+      nombre: nombre || null,
+      pais: pais || null,
+      producto_interes: interes || null,
+      utm_source: utm,
+      paso_1_red: state.paso1,
+      red_origen: state.red,
+      paso_1_red_at: state.paso1 ? new Date().toISOString() : null,
+      paso_2_web: true,
+      paso_2_web_at: new Date().toISOString(),
+      estado: state.paso1 ? 'registrado_web' : 'visitante',
+      score: state.paso1 ? 30 : 10,
+    };
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/community_members`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON,
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Prefer': 'return=representation,resolution=merge-duplicates',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      state.paso2 = true;
+      state.email = email;
+      state.memberId = data[0]?.id || null;
+      saveState();
+      renderState();
+      showMsg('success', '✅ Registro completado. Ahora completa el Paso 3 en Telegram.');
+    } else {
+      const err = await res.text();
+      // Si ya existe el email (duplicate), igual marcamos paso2
+      if (err.includes('duplicate') || err.includes('unique')) {
+        state.paso2 = true;
+        state.email = email;
+        saveState();
+        renderState();
+        showMsg('success', '✅ Ya estabas registrado. Continúa al Paso 3.');
+      } else {
+        showMsg('error', 'Error al registrar. Intenta de nuevo.');
+        console.error(err);
+      }
+    }
+  } catch(e) {
+    showMsg('error', 'Error de conexión. Intenta de nuevo.');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Completar Registro · Paso 2/3';
+  }
+}
+
+// ── PASO 3: Telegram ─────────────────────────────────────
+function markStep3() {
+  if (!state.paso2) {
+    alert('Primero completa el Paso 2 (registro).');
+    return;
+  }
+  // Marca paso3 tras 3s (asume que el usuario se unió)
+  setTimeout(async () => {
+    state.paso3 = true;
+    saveState();
+
+    // Actualizar en Supabase si tenemos email
+    if (state.email) {
+      await fetch(`${SUPABASE_URL}/rest/v1/community_members?email=eq.${encodeURIComponent(state.email)}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON,
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+        },
+        body: JSON.stringify({
+          paso_3_telegram: true,
+          paso_3_tel_at: new Date().toISOString(),
+          estado: 'entro_comunidad',
+          score: 60,
+        }),
+      });
+    }
+    renderState();
+  }, 3000);
+}
+
+// ── RENDER STATE ──────────────────────────────────────────
+function renderState() {
+  // Paso 1
+  const c1 = document.getElementById('step1-card');
+  if (state.paso1) c1.classList.add('done'); else c1.classList.add('active');
+
+  // Paso 2
+  const c2 = document.getElementById('step2-card');
+  if (state.paso2) c2.classList.add('done');
+  else if (state.paso1) c2.classList.add('active');
+
+  // Paso 3
+  const c3 = document.getElementById('step3-card');
+  if (state.paso3) c3.classList.add('done');
+  else if (state.paso2) c3.classList.add('active');
+
+  // Material
+  const unlocked = state.paso1 && state.paso2 && state.paso3;
+  if (unlocked) {
+    document.querySelectorAll('.material-card').forEach(c => {
+      c.classList.add('unlocked');
+      c.querySelector('.lock-icon').textContent = '🔓';
+    });
+    // Añadir links de descarga (placeholders)
+    const links = [
+      '#guia-inversion',
+      '#senales',
+      '#kit-ia',
+      'https://hotmart.com/venbratech',
+    ];
+    document.querySelectorAll('.material-card').forEach((c, i) => {
+      if (!c.querySelector('a')) {
+        const a = document.createElement('a');
+        a.href = links[i] || '#';
+        a.textContent = 'Acceder →';
+        if (links[i] && links[i].startsWith('http')) a.target = '_blank';
+        c.appendChild(a);
+      }
+    });
+  }
+}
+
+function showMsg(type, text) {
+  const el = document.getElementById('form-msg');
+  el.className = `msg ${type}`;
+  el.textContent = text;
+}
+</script>
+
+</body>
+</html>
