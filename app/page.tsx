@@ -1,109 +1,314 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useRef } from "react";
 
-const LANGS: Record<string, {code:string;flag:string}> = {en:{code:"EN",flag:"ðŸ‡ºðŸ‡¸"},es:{code:"ES",flag:"ðŸ‡ªðŸ‡¸"},pt:{code:"PT",flag:"ðŸ‡§ðŸ‡·"},fr:{code:"FR",flag:"ðŸ‡«ðŸ‡·"},de:{code:"DE",flag:"ðŸ‡©ðŸ‡ª"},zh:{code:"ZH",flag:"ðŸ‡¨ðŸ‡³"},ja:{code:"JA",flag:"ðŸ‡¯ðŸ‡µ"},ar:{code:"AR",flag:"ðŸ‡¸ðŸ‡¦"}};
-
-const T: Record<string, Record<string, any>> = {
-en:{tagline:"Institutional-Grade Referral Platform",h1:"Your Gateway to",h2:"Regulated Investing",desc:"Access ETFs, fractional real estate, and diversified portfolios through trusted, SEC-regulated platforms. Education first, always.",start:"Start Learning",explore:"Explore",scroll:"Scroll",s1:"Assets on Partner Platforms",s2:"Regulated Platforms",s3:"Minimum Investment",s4:"Platform Access",pt:"Trusted Partners",pt1:"Regulated Platforms,",pt2:"Curated for You",etoro:"Access BlackRock iShares ETFs, global equities, and diversified portfolios through one of the world's leading regulated trading platforms.",arrived:"Invest in residential rental properties starting from $100. Earn passive income through fractional ownership of carefully selected homes.",fundrise:"Access institutional-quality real estate investments previously available only to the ultra-wealthy.",more:"Learn More",proc:"Process",pr1:"Three Steps to",pr2:"Smarter Investing",l:"Learn",ld:"Access free educational content about investment fundamentals, asset classes, and wealth-building strategies.",e:"Explore",ed:"Discover regulated platforms curated to match your investment goals and risk tolerance.",st:"Start",sd:"Begin your investment journey through trusted, SEC-regulated platforms with full transparency.",ct:"Begin Your Journey",ct1:"Start Your",ct2:"Financial Education",ctd:"Join our community of informed investors. Receive weekly insights on ETFs, real estate, and portfolio strategies.",ph:"Enter your email",sub:"Subscribe",thx:"Welcome aboard. Check your inbox.",dis:"VenBra Tech operates exclusively as a referral and education platform. We are not registered investment advisors, broker-dealers, or financial planners. All investments carry risk, including potential loss of capital. Past performance does not guarantee future results. Always consult a registered financial advisor before making investment decisions.",dl:"Disclaimer:",fd:"Institutional-grade investment education and regulated platform referrals.",n:["Platform","Education","About"],gs:"Get Started",ef:["BlackRock iShares ETFs","Global Stock Markets","Regulated & Insured","CopyTrading Technology"],af:["From $100 Minimum","Rental Income","SEC-Qualified","Professionally Managed"],ff:["Multiple Fund Options","Commercial & Residential","Low Minimums","Quarterly Dividends"]},
-es:{tagline:"Plataforma de Referidos Institucional",h1:"Tu Puerta a la",h2:"InversiÃ³n Regulada",desc:"Accede a ETFs, bienes raÃ­ces fraccionados y portafolios diversificados a travÃ©s de plataformas reguladas. EducaciÃ³n primero, siempre.",start:"Empezar",explore:"Explorar",scroll:"Desplazar",s1:"Activos en Plataformas",s2:"Plataformas Reguladas",s3:"InversiÃ³n MÃ­nima",s4:"Acceso 24/7",pt:"Socios de Confianza",pt1:"Plataformas Reguladas,",pt2:"Seleccionadas para Ti",etoro:"Accede a ETFs BlackRock, acciones globales y portafolios diversificados.",arrived:"Invierte en propiedades desde $100. Ingresos pasivos por propiedad fraccionada.",fundrise:"Inversiones inmobiliarias de calidad institucional.",more:"Saber MÃ¡s",proc:"Proceso",pr1:"Tres Pasos para",pr2:"Invertir Mejor",l:"Aprende",ld:"Contenido educativo gratuito sobre fundamentos de inversiÃ³n.",e:"Explora",ed:"Plataformas reguladas para tus objetivos.",st:"Comienza",sd:"Inicia tu viaje con transparencia total.",ct:"Comienza Tu Viaje",ct1:"Inicia Tu",ct2:"EducaciÃ³n Financiera",ctd:"Ãšnete a nuestra comunidad de inversores informados.",ph:"Tu email",sub:"Suscribirse",thx:"Bienvenido. Revisa tu bandeja.",dis:"VenBra Tech actÃºa exclusivamente como plataforma de referidos y educaciÃ³n. No somos asesores de inversiÃ³n registrados. Todas las inversiones conllevan riesgo. Consulte siempre a un asesor financiero registrado.",dl:"Aviso Legal:",fd:"EducaciÃ³n de inversiÃ³n y referidos a plataformas reguladas.",n:["Plataformas","EducaciÃ³n","Acerca de"],gs:"Comenzar",ef:["ETFs BlackRock","Mercados Globales","Regulado","CopyTrading"],af:["Desde $100","Ingresos por Alquiler","SEC","GestiÃ³n Pro"],ff:["MÃºltiples Fondos","Comercial y Residencial","Bajos MÃ­nimos","Dividendos"]},
-pt:{tagline:"Plataforma de ReferÃªncias Institucional",h1:"Sua Porta para",h2:"Investimento Regulado",desc:"Acesse ETFs e imÃ³veis fracionados atravÃ©s de plataformas reguladas.",start:"ComeÃ§ar",explore:"Explorar",scroll:"Rolar",s1:"Ativos em Plataformas",s2:"Plataformas Reguladas",s3:"Investimento MÃ­nimo",s4:"Acesso 24/7",pt:"Parceiros",pt1:"Plataformas Reguladas,",pt2:"Selecionadas para VocÃª",etoro:"ETFs BlackRock e aÃ§Ãµes globais.",arrived:"Invista em imÃ³veis a partir de $100.",fundrise:"Investimentos imobiliÃ¡rios institucionais.",more:"Saiba Mais",proc:"Processo",pr1:"TrÃªs Passos para",pr2:"Investir Melhor",l:"Aprenda",ld:"ConteÃºdo educativo gratuito.",e:"Explore",ed:"Plataformas para seus objetivos.",st:"Comece",sd:"Inicie sua jornada com transparÃªncia.",ct:"Comece Sua Jornada",ct1:"Inicie Sua",ct2:"EducaÃ§Ã£o Financeira",ctd:"Junte-se Ã  nossa comunidade.",ph:"Seu email",sub:"Inscrever-se",thx:"Bem-vindo.",dis:"VenBra Tech atua como plataforma de referÃªncias e educaÃ§Ã£o. Consulte um consultor financeiro.",dl:"Aviso Legal:",fd:"EducaÃ§Ã£o de investimento regulada.",n:["Plataformas","EducaÃ§Ã£o","Sobre"],gs:"ComeÃ§ar",ef:["ETFs BlackRock","Mercados","Regulado","CopyTrading"],af:["A partir de $100","Renda","SEC","GestÃ£o Pro"],ff:["MÃºltiplos Fundos","Comercial","Baixos MÃ­nimos","Dividendos"]},
-fr:{tagline:"Plateforme Institutionnelle",h1:"Votre Porte vers",h2:"l'Investissement RÃ©gulÃ©",desc:"AccÃ©dez aux ETFs via des plateformes rÃ©gulÃ©es.",start:"Commencer",explore:"Explorer",scroll:"DÃ©filer",s1:"Actifs Partenaires",s2:"Plateformes",s3:"Investissement Min.",s4:"AccÃ¨s 24/7",pt:"Partenaires",pt1:"Plateformes RÃ©gulÃ©es,",pt2:"Pour Vous",etoro:"ETFs BlackRock et actions.",arrived:"Immobilier dÃ¨s 100$.",fundrise:"Investissements institutionnels.",more:"En Savoir Plus",proc:"Processus",pr1:"Trois Ã‰tapes",pr2:"Investir Mieux",l:"Apprenez",ld:"Contenu Ã©ducatif gratuit.",e:"Explorez",ed:"Plateformes adaptÃ©es.",st:"Commencez",sd:"DÃ©marrez via des plateformes rÃ©gulÃ©es.",ct:"Commencez",ct1:"DÃ©marrez",ct2:"Votre Ã‰ducation",ctd:"Rejoignez notre communautÃ©.",ph:"Votre email",sub:"S'inscrire",thx:"Bienvenue.",dis:"VenBra Tech est une plateforme de rÃ©fÃ©rencement. Consultez un conseiller.",dl:"Avertissement:",fd:"Ã‰ducation institutionnelle.",n:["Plateformes","Ã‰ducation","Ã€ Propos"],gs:"Commencer",ef:["BlackRock","MarchÃ©s","RÃ©gulÃ©","CopyTrading"],af:["DÃ¨s 100$","Revenus","SEC","Pro"],ff:["Fonds","Commercial","Bas","Dividendes"]},
-de:{tagline:"Institutionelle Plattform",h1:"Ihr Tor zu",h2:"Reguliertem Investieren",desc:"Zugang zu ETFs Ã¼ber regulierte Plattformen.",start:"Starten",explore:"Entdecken",scroll:"Scrollen",s1:"Partneraktiva",s2:"Plattformen",s3:"Mindestanlage",s4:"24/7",pt:"Partner",pt1:"Regulierte Plattformen,",pt2:"FÃ¼r Sie",etoro:"BlackRock ETFs.",arrived:"Ab 100$ investieren.",fundrise:"Institutionelle Investments.",more:"Mehr",proc:"Prozess",pr1:"Drei Schritte",pr2:"Besser Investieren",l:"Lernen",ld:"Kostenlose Bildung.",e:"Entdecken",ed:"Passende Plattformen.",st:"Starten",sd:"Investmentreise beginnen.",ct:"Beginnen",ct1:"Starten Sie",ct2:"Ihre Finanzbildung",ctd:"WÃ¶chentliche Einblicke.",ph:"Ihre E-Mail",sub:"Abonnieren",thx:"Willkommen.",dis:"VenBra Tech ist eine Empfehlungsplattform. Konsultieren Sie einen Berater.",dl:"Haftungsausschluss:",fd:"Institutionelle Bildung.",n:["Plattformen","Bildung","Ãœber Uns"],gs:"Starten",ef:["BlackRock","MÃ¤rkte","Reguliert","CopyTrading"],af:["Ab 100$","Miete","SEC","Pro"],ff:["Fonds","Gewerbe","Niedrig","Dividenden"]},
-zh:{tagline:"æœºæž„çº§æŽ¨èå¹³å°",h1:"é€šå¾€",h2:"å—ç›‘ç®¡æŠ•èµ„çš„å¤§é—¨",desc:"é€šè¿‡å—ç›‘ç®¡å¹³å°èŽ·å–ETFå’Œæˆ¿åœ°äº§ã€‚",start:"å¼€å§‹å­¦ä¹ ",explore:"æŽ¢ç´¢",scroll:"æ»šåŠ¨",s1:"åˆä½œå¹³å°èµ„äº§",s2:"å—ç›‘ç®¡å¹³å°",s3:"æœ€ä½ŽæŠ•èµ„",s4:"å…¨å¤©è®¿é—®",pt:"åˆä½œä¼™ä¼´",pt1:"å—ç›‘ç®¡å¹³å°ï¼Œ",pt2:"ä¸ºæ‚¨ç²¾é€‰",etoro:"è´èŽ±å¾·ETFå’Œå…¨çƒè‚¡ç¥¨ã€‚",arrived:"ä»Ž100ç¾Žå…ƒèµ·æŠ•èµ„æˆ¿åœ°äº§ã€‚",fundrise:"æœºæž„çº§æˆ¿åœ°äº§æŠ•èµ„ã€‚",more:"äº†è§£æ›´å¤š",proc:"æµç¨‹",pr1:"ä¸‰æ­¥å®žçŽ°",pr2:"æ›´æ˜Žæ™ºçš„æŠ•èµ„",l:"å­¦ä¹ ",ld:"å…è´¹æ•™è‚²å†…å®¹ã€‚",e:"æŽ¢ç´¢",ed:"é€‚åˆæ‚¨çš„å¹³å°ã€‚",st:"å¼€å§‹",sd:"é€šè¿‡å—ç›‘ç®¡å¹³å°å¼€å§‹ã€‚",ct:"å¼€å§‹æ—…ç¨‹",ct1:"å¼€å§‹æ‚¨çš„",ct2:"é‡‘èžæ•™è‚²",ctd:"åŠ å…¥æŠ•èµ„è€…ç¤¾åŒºã€‚",ph:"æ‚¨çš„é‚®ç®±",sub:"è®¢é˜…",thx:"æ¬¢è¿Žã€‚",dis:"VenBra Techä»…ä½œä¸ºæŽ¨èå¹³å°ã€‚è¯·å’¨è¯¢è´¢åŠ¡é¡¾é—®ã€‚",dl:"å…è´£å£°æ˜Žï¼š",fd:"æœºæž„çº§æŠ•èµ„æ•™è‚²ã€‚",n:["å¹³å°","æ•™è‚²","å…³äºŽ"],gs:"å¼€å§‹",ef:["è´èŽ±å¾·","å…¨çƒ","å—ç›‘ç®¡","è·Ÿå•"],af:["100ç¾Žå…ƒ","ç§Ÿé‡‘","SEC","ä¸“ä¸š"],ff:["å¤šåŸºé‡‘","å•†ä½","ä½Žé—¨æ§›","åˆ†çº¢"]},
-ja:{tagline:"æ©Ÿé–¢ã‚°ãƒ¬ãƒ¼ãƒ‰ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ",h1:"è¦åˆ¶æŠ•è³‡ã¸ã®",h2:"ã‚²ãƒ¼ãƒˆã‚¦ã‚§ã‚¤",desc:"è¦åˆ¶ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã§ETFã«ã‚¢ã‚¯ã‚»ã‚¹ã€‚",start:"å­¦ç¿’é–‹å§‹",explore:"æŽ¢ç´¢",scroll:"ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«",s1:"ãƒ‘ãƒ¼ãƒˆãƒŠãƒ¼è³‡ç”£",s2:"è¦åˆ¶ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ",s3:"æœ€ä½ŽæŠ•è³‡é¡",s4:"24/7",pt:"ãƒ‘ãƒ¼ãƒˆãƒŠãƒ¼",pt1:"è¦åˆ¶ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã€",pt2:"åŽ³é¸",etoro:"ãƒ–ãƒ©ãƒƒã‚¯ãƒ­ãƒƒã‚¯ETFã€‚",arrived:"100ãƒ‰ãƒ«ã‹ã‚‰ä¸å‹•ç”£æŠ•è³‡ã€‚",fundrise:"æ©Ÿé–¢å“è³ªæŠ•è³‡ã€‚",more:"è©³ç´°",proc:"ãƒ—ãƒ­ã‚»ã‚¹",pr1:"3ã‚¹ãƒ†ãƒƒãƒ—ã§",pr2:"è³¢ã„æŠ•è³‡",l:"å­¦ã¶",ld:"ç„¡æ–™æ•™è‚²ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã€‚",e:"æŽ¢ã™",ed:"ç›®æ¨™ã«åˆã£ãŸãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã€‚",st:"å§‹ã‚ã‚‹",sd:"è¦åˆ¶ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã§é–‹å§‹ã€‚",ct:"æ—…ã‚’å§‹ã‚ã‚‹",ct1:"ã‚ãªãŸã®",ct2:"é‡‘èžæ•™è‚²",ctd:"æŠ•è³‡å®¶ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã«å‚åŠ ã€‚",ph:"ãƒ¡ãƒ¼ãƒ«",sub:"è³¼èª­",thx:"ã‚ˆã†ã“ãã€‚",dis:"VenBra Techã¯ç´¹ä»‹ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã§ã™ã€‚",dl:"å…è²¬äº‹é …ï¼š",fd:"æ©Ÿé–¢ç´šæ•™è‚²ã€‚",n:["ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ","æ•™è‚²","ä¼šç¤¾æƒ…å ±"],gs:"å§‹ã‚ã‚‹",ef:["ãƒ–ãƒ©ãƒƒã‚¯ãƒ­ãƒƒã‚¯","ã‚°ãƒ­ãƒ¼ãƒãƒ«","è¦åˆ¶æ¸ˆ","ã‚³ãƒ”ãƒ¼"],af:["100ãƒ‰ãƒ«","è³ƒæ–™","SEC","ãƒ—ãƒ­"],ff:["ãƒ•ã‚¡ãƒ³ãƒ‰","å•†ä½","ä½Žé¡","é…å½“"]},
-ar:{tagline:"Ù…Ù†ØµØ© Ø¥Ø­Ø§Ù„Ø© Ù…Ø¤Ø³Ø³ÙŠØ©",h1:"Ø¨ÙˆØ§Ø¨ØªÙƒ Ø¥Ù„Ù‰",h2:"Ø§Ù„Ø§Ø³ØªØ«Ù…Ø§Ø± Ø§Ù„Ù…Ù†Ø¸Ù…",desc:"Ø§Ù„ÙˆØµÙˆÙ„ Ø¥Ù„Ù‰ ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ø§Ø³ØªØ«Ù…Ø§Ø± Ø¹Ø¨Ø± Ù…Ù†ØµØ§Øª Ù…Ù†Ø¸Ù…Ø©.",start:"Ø§Ø¨Ø¯Ø£",explore:"Ø§Ø³ØªÙƒØ´Ù",scroll:"Ù…Ø±Ø±",s1:"Ø£ØµÙˆÙ„ Ø§Ù„Ø´Ø±ÙƒØ§Ø¡",s2:"Ù…Ù†ØµØ§Øª Ù…Ù†Ø¸Ù…Ø©",s3:"Ø§Ù„Ø­Ø¯ Ø§Ù„Ø£Ø¯Ù†Ù‰",s4:"24/7",pt:"Ø´Ø±ÙƒØ§Ø¡",pt1:"Ù…Ù†ØµØ§Øª Ù…Ù†Ø¸Ù…Ø©ØŒ",pt2:"Ù…Ø®ØªØ§Ø±Ø© Ù„Ùƒ",etoro:"ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø¨Ù„Ø§Ùƒ Ø±ÙˆÙƒ.",arrived:"Ø§Ø³ØªØ«Ù…Ø± Ù…Ù† 100 Ø¯ÙˆÙ„Ø§Ø±.",fundrise:"Ø§Ø³ØªØ«Ù…Ø§Ø±Ø§Øª Ù…Ø¤Ø³Ø³ÙŠØ©.",more:"Ø§Ù„Ù…Ø²ÙŠØ¯",proc:"Ø§Ù„Ø¹Ù…Ù„ÙŠØ©",pr1:"Ø«Ù„Ø§Ø« Ø®Ø·ÙˆØ§Øª",pr2:"Ø§Ø³ØªØ«Ù…Ø§Ø± Ø£Ø°ÙƒÙ‰",l:"ØªØ¹Ù„Ù…",ld:"Ù…Ø­ØªÙˆÙ‰ ØªØ¹Ù„ÙŠÙ…ÙŠ Ù…Ø¬Ø§Ù†ÙŠ.",e:"Ø§Ø³ØªÙƒØ´Ù",ed:"Ù…Ù†ØµØ§Øª ØªÙ†Ø§Ø³Ø¨ Ø£Ù‡Ø¯Ø§ÙÙƒ.",st:"Ø§Ø¨Ø¯Ø£",sd:"Ø§Ø¨Ø¯Ø£ Ø±Ø­Ù„ØªÙƒ.",ct:"Ø§Ø¨Ø¯Ø£ Ø±Ø­Ù„ØªÙƒ",ct1:"Ø§Ø¨Ø¯Ø£",ct2:"ØªØ¹Ù„ÙŠÙ…Ùƒ Ø§Ù„Ù…Ø§Ù„ÙŠ",ctd:"Ø§Ù†Ø¶Ù… Ù„Ù„Ù…Ø³ØªØ«Ù…Ø±ÙŠÙ†.",ph:"Ø¨Ø±ÙŠØ¯Ùƒ",sub:"Ø§Ø´ØªØ±Ùƒ",thx:"Ù…Ø±Ø­Ø¨Ø§Ù‹.",dis:"VenBra Tech Ù…Ù†ØµØ© Ø¥Ø­Ø§Ù„Ø© ÙÙ‚Ø·. Ø§Ø³ØªØ´Ø± Ù…Ø³ØªØ´Ø§Ø±Ø§Ù‹.",dl:"Ø¥Ø®Ù„Ø§Ø¡ Ù…Ø³Ø¤ÙˆÙ„ÙŠØ©:",fd:"ØªØ¹Ù„ÙŠÙ… Ø§Ø³ØªØ«Ù…Ø§Ø±ÙŠ.",n:["Ø§Ù„Ù…Ù†ØµØ§Øª","Ø§Ù„ØªØ¹Ù„ÙŠÙ…","Ø¹Ù†"],gs:"Ø§Ø¨Ø¯Ø£",ef:["Ø¨Ù„Ø§Ùƒ Ø±ÙˆÙƒ","Ø£Ø³ÙˆØ§Ù‚","Ù…Ù†Ø¸Ù…Ø©","Ù†Ø³Ø®"],af:["100$","Ø¥ÙŠØ¬Ø§Ø±","SEC","Ø¥Ø¯Ø§Ø±Ø©"],ff:["ØµÙ†Ø§Ø¯ÙŠÙ‚","ØªØ¬Ø§Ø±ÙŠ","Ù…Ù†Ø®ÙØ¶Ø©","Ø£Ø±Ø¨Ø§Ø­"]}
+const C = {
+  black: "#080808", dark: "#0d0d0d", card: "rgba(18,18,22,0.85)",
+  gold: "#c5a455", goldL: "#d4b76a", white: "#f5f5f0",
+  gray: "#888", lgray: "#bbb", border: "rgba(197,164,85,0.15)",
 };
 
-function useInView(th=0.15){const r=useRef<HTMLDivElement>(null);const[v,s]=useState(false);useEffect(()=>{const el=r.current;if(!el)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:th});o.observe(el);return()=>o.disconnect()},[th]);return[r,v] as const}
-function FI({children,delay=0}:{children:React.ReactNode;delay?:number}){const[r,v]=useInView();return<div ref={r} style={{opacity:v?1:0,transform:v?"translateY(0)":"translateY(32px)",transition:`opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`}}>{children}</div>}
+const CHARS = [
+  { name:"Veyra", role:"Vigía del Horizonte", tag:"Predicción & Datos", color:"#7B68EE",
+    desc:"Lee las señales del mercado antes que nadie. Tu oráculo de análisis predictivo.", icon:"◈" },
+  { name:"Kael", role:"Alcaide de Hierro", tag:"Seguridad & Protección", color:"#4ECDC4",
+    desc:"Guardián Zero-Trust del ecosistema. Protege cada activo con precisión quirúrgica.", icon:"⬡" },
+  { name:"Lyra", role:"Productora de Ecos", tag:"Contenido & Conversión", color:"#FF6B9D",
+    desc:"Convierte datos en narrativa que vende. Directora creativa del ecosistema a 128 BPM.", icon:"◉" },
+  { name:"Draxen", role:"Arquitecto Inmutable", tag:"Gobernanza & Estructura", color:"#FFD93D",
+    desc:"Registra todo. Gobierna cada proceso con contratos inmutables y arquitectura de élite.", icon:"⬢" },
+];
+
+const STATS = [
+  { n:"$10T+", l:"en plataformas referidas" }, { n:"4", l:"verticales activas" },
+  { n:"100%", l:"stack gratuito legítimo" }, { n:"14", l:"ejes de la academia" },
+];
+
+function useInView(th=0.12){
+  const r=useRef<HTMLDivElement>(null);
+  const[v,s]=useState(false);
+  useEffect(()=>{
+    const el=r.current;if(!el)return;
+    const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:th});
+    o.observe(el);return()=>o.disconnect();
+  },[th]);
+  return[r,v] as const;
+}
+
+function FI({children,delay=0}:{children:React.ReactNode;delay?:number}){
+  const[r,v]=useInView();
+  return(
+    <div ref={r} style={{opacity:v?1:0,transform:v?"translateY(0)":"translateY(28px)",
+      transition:`opacity 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}s,transform 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}s`}}>
+      {children}
+    </div>
+  );
+}
 
 export default function Home(){
-const[lang,setLang]=useState("en");const[open,setOpen]=useState(false);const[email,setEmail]=useState("");const[done,setDone]=useState(false);const[sc,setSc]=useState(false);const t=T[lang];
-useEffect(()=>{const h=()=>setSc(window.scrollY>60);window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h)},[]);
-const C={black:"#0a0a0a",dark:"#0d1117",accent:"#c5a455",accentL:"#d4b76a",white:"#f8f8f8",gray:"#8b8b8b",lgray:"#c4c4c4",border:"rgba(197,164,85,0.15)",card:"rgba(20,28,46,0.6)"};
-const platforms=[{name:"eToro",tag:"ETFs & Global Markets",d:t.etoro,f:t.ef},{name:"Arrived Homes",tag:"Fractional Real Estate",d:t.arrived,f:t.af},{name:"Fundrise",tag:"Real Estate Crowdfunding",d:t.fundrise,f:t.ff}];
-const steps=[{n:"01",t:t.l,d:t.ld},{n:"02",t:t.e,d:t.ed},{n:"03",t:t.st,d:t.sd}];
+  const[sc,setSc]=useState(false);
+  const[email,setEmail]=useState("");
+  const[done,setDone]=useState(false);
+  const[loading,setLoading]=useState(false);
 
-return<div dir={lang==="ar"?"rtl":"ltr"} style={{background:C.black}}>
-<style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{overflow-x:hidden}::selection{background:rgba(197,164,85,0.27)}input::placeholder{color:#8b8b8b}@media(max-width:768px){.hm{display:none!important}.g3{grid-template-columns:1fr!important}.g4{grid-template-columns:repeat(2,1fr)!important}.fc{flex-direction:column!important}}`}</style>
+  useEffect(()=>{
+    const h=()=>setSc(window.scrollY>60);
+    window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h);
+  },[]);
 
-<div style={{position:"fixed",top:0,left:0,width:"100%",height:"100%",backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")`,pointerEvents:"none",zIndex:9999,opacity:0.5}}/>
+  const handleSub=async(e:React.FormEvent)=>{
+    e.preventDefault();if(!email||done)return;
+    setLoading(true);
+    try{
+      await fetch("https://xshannxyjzrhgnsqmhun.supabase.co/rest/v1/financial_leads",{
+        method:"POST",
+        headers:{"Content-Type":"application/json",
+          "apikey":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaGFubnhZanpyaGduc3FtaHVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NzcxMTIsImV4cCI6MjAzMTU1MzExMn0.Ym8gDxUPz-eF3cQ1GQ5Q_HLVHRnfVHqnDPVOYXp6ARk",
+          "Prefer":"return=minimal"},
+        body:JSON.stringify({email,source:"venbratech_home_v2",status:"new"})
+      });
+    }catch(_){}
+    setLoading(false);setDone(true);setEmail("");
+  };
 
-<nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,background:sc?"rgba(10,10,10,0.92)":"transparent",backdropFilter:sc?"blur(20px)":"none",borderBottom:sc?`1px solid ${C.border}`:"none",transition:"all .5s",padding:"0 5%"}}>
-<div style={{maxWidth:1280,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",height:72}}>
-<div style={{display:"flex",alignItems:"center",gap:10}}>
-<div style={{width:36,height:36,border:`2px solid ${C.accent}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cormorant Garamond',serif",fontWeight:700,fontSize:18,color:C.accent}}>V</div>
-<span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:C.white,letterSpacing:2}}>VENBRA TECH</span>
-</div>
-<div style={{display:"flex",gap:28,alignItems:"center"}}>
-<a href="/academia" className="hm" style={{color:"#c5a455",textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:2,textTransform:"uppercase",fontWeight:600}}>Academia</a>
-{t.n.map((x:string,i:number)=><a key={i} href={`#${["platform","education","about"][i]}`} className="hm" style={{color:C.lgray,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:2,textTransform:"uppercase"}}>{x}</a>)}
-<div style={{position:"relative"}}><button onClick={()=>setOpen(!open)} style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.05)",border:`1px solid ${C.border}`,color:C.lgray,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12}}>{LANGS[lang].flag} {LANGS[lang].code} â–¼</button>
-{open&&<div style={{position:"absolute",top:"100%",right:0,marginTop:4,background:C.dark,border:`1px solid ${C.border}`,zIndex:200,minWidth:180}}>{Object.entries(LANGS).map(([c,l])=><button key={c} onClick={()=>{setLang(c);setOpen(false)}} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"10px 16px",border:"none",cursor:"pointer",background:lang===c?`${C.accent}15`:"transparent",color:lang===c?C.accent:C.lgray,fontFamily:"'DM Sans',sans-serif",fontSize:13,textAlign:"left"}}>{l.flag} {({en:"English",es:"EspaÃ±ol",pt:"PortuguÃªs",fr:"FranÃ§ais",de:"Deutsch",zh:"ä¸­æ–‡",ja:"æ—¥æœ¬èªž",ar:"Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©"} as Record<string,string>)[c]}</button>)}</div>}
-</div>
-<a href="#start" className="hm" style={{padding:"10px 28px",border:`1px solid ${C.accent}`,color:C.accent,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:2.5,textTransform:"uppercase"}}>{t.gs}</a>
-</div></div></nav>
+  return(
+    <div style={{background:C.black,minHeight:"100vh",overflowX:"hidden"}}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        ::selection{background:rgba(197,164,85,0.25)}input::placeholder{color:#555}
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0d0d0d}::-webkit-scrollbar-thumb{background:#c5a455;border-radius:2px}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        .char-card{transition:all 0.3s;cursor:default}.char-card:hover{transform:translateY(-4px)!important;border-color:rgba(197,164,85,0.4)!important}
+        .cta-gold:hover{background:#d4b76a!important;transform:scale(1.02)}
+        .cta-outline:hover{border-color:#c5a455!important;color:#c5a455!important}
+        .nav-a:hover{color:#c5a455!important}
+        @media(max-width:768px){
+          .hide-m{display:none!important}.hero-h{font-size:2.4rem!important}
+          .stats-g{grid-template-columns:repeat(2,1fr)!important}
+          .chars-g{grid-template-columns:1fr!important}
+          .b2b-g{grid-template-columns:1fr!important}
+          .price-g{grid-template-columns:repeat(2,1fr)!important}
+          .foot-g{flex-direction:column!important}
+        }
+      `}</style>
 
-<section style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",background:`radial-gradient(ellipse at 50% 50%,rgba(197,164,85,0.06),transparent 50%),linear-gradient(180deg,${C.black},${C.dark})`,position:"relative",overflow:"hidden",padding:"0 5%",textAlign:"center"}}>
-<div style={{position:"absolute",top:"50%",left:"50%",width:600,height:600,border:`1px solid ${C.accent}08`,borderRadius:"50%",transform:"translate(-50%,-50%)"}}/>
-<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:6,color:C.accent,textTransform:"uppercase",marginBottom:40}}>{t.tagline}</div></FI>
-<FI delay={0.15}><h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,7vw,88px)",fontWeight:300,color:C.white,lineHeight:1.05,maxWidth:900}}>{t.h1}<br/><span style={{fontWeight:600,color:C.accent}}>{t.h2}</span></h1></FI>
-<FI delay={0.3}><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:17,color:C.gray,lineHeight:1.7,maxWidth:560,margin:"36px auto 48px"}}>{t.desc}</p></FI>
-<FI delay={0.45}><div style={{display:"flex",gap:20,flexWrap:"wrap",justifyContent:"center"}}>
-<a href="#start" style={{padding:"16px 48px",background:C.accent,color:C.black,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:2,textTransform:"uppercase",fontWeight:600}}>{t.start}</a>
-<a href="#platform" style={{padding:"16px 48px",border:`1px solid ${C.gray}44`,color:C.lgray,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:2,textTransform:"uppercase"}}>{t.explore}</a>
-</div></FI>
-</section>
+      {/* Grain */}
+      <div style={{position:"fixed",inset:0,backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")`,pointerEvents:"none",zIndex:9999,opacity:0.6}}/>
 
-<section style={{padding:"80px 5%",background:C.dark,borderTop:`1px solid ${C.border}`,borderBottom:`1px solid ${C.border}`}}>
-<div className="g4" style={{maxWidth:1280,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:40}}>
-{[{v:"$10T+",l:t.s1},{v:"3",l:t.s2},{v:"$100",l:t.s3},{v:"24/7",l:t.s4}].map((s,i)=><FI key={i} delay={i*0.1}><div style={{textAlign:"center"}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:48,fontWeight:300,color:C.accent,lineHeight:1}}>{s.v}</div><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:3,color:C.gray,textTransform:"uppercase",marginTop:12}}>{s.l}</div></div></FI>)}
-</div></section>
+      {/* NAV */}
+      <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,
+        background:sc?"rgba(8,8,8,0.96)":"transparent",backdropFilter:sc?"blur(24px)":"none",
+        borderBottom:sc?`1px solid ${C.border}`:"none",transition:"all 0.4s",padding:"0 6%"}}>
+        <div style={{maxWidth:1280,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",height:72}}>
+          <a href="/" style={{textDecoration:"none",display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:C.gold,letterSpacing:2}}>VENBRATECH</span>
+            <span style={{fontSize:9,color:C.gray,letterSpacing:3,fontFamily:"'DM Sans',sans-serif",textTransform:"uppercase",marginTop:3}}>LAT</span>
+          </a>
+          <div className="hide-m" style={{display:"flex",gap:36,alignItems:"center"}}>
+            {["Sistema","Academia","B2B","Comunidad"].map((n,i)=>(
+              <a key={i} href={["#sistema","/academia","#b2b","/academia"][i]} className="nav-a"
+                style={{color:C.lgray,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:2.5,textTransform:"uppercase",transition:"color 0.2s"}}>
+                {n}
+              </a>
+            ))}
+            <a href="/academia" className="cta-outline"
+              style={{padding:"9px 24px",border:`1px solid rgba(197,164,85,0.4)`,color:C.gold,
+                textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:2.5,textTransform:"uppercase",transition:"all 0.2s"}}>
+              Entrar
+            </a>
+          </div>
+        </div>
+      </nav>
 
-<section id="platform" style={{padding:"120px 5%",background:`linear-gradient(180deg,${C.dark},${C.black})`}}>
-<div style={{maxWidth:1280,margin:"0 auto"}}>
-<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:5,color:C.accent,textTransform:"uppercase",marginBottom:20}}>{t.pt}</div></FI>
-<FI delay={0.1}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(32px,4vw,56px)",fontWeight:300,color:C.white,margin:"0 0 60px",lineHeight:1.15}}>{t.pt1}<br/><span style={{fontWeight:600}}>{t.pt2}</span></h2></FI>
-<div className="g3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24}}>
-{platforms.map((p,i)=><FI key={i} delay={0.15+i*0.12}><div style={{background:C.card,border:`1px solid ${C.border}`,padding:40,backdropFilter:"blur(10px)",position:"relative",overflow:"hidden",height:"100%"}}>
-<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,${C.accent}66,transparent)`}}/>
-<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:3,color:C.accent,textTransform:"uppercase",marginBottom:16}}>{p.tag}</div>
-<h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:C.white,margin:"0 0 16px"}}>{p.name}</h3>
-<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.gray,lineHeight:1.7,margin:"0 0 28px"}}>{p.d}</p>
-{p.f.map((f:string,j:number)=><div key={j} style={{display:"flex",alignItems:"center",gap:10,fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.lgray,marginBottom:10}}><div style={{width:5,height:5,background:C.accent,borderRadius:"50%",flexShrink:0}}/>{f}</div>)}
-<div style={{marginTop:32,paddingTop:24,borderTop:`1px solid ${C.border}`}}><a href="#start" style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:2,color:C.accent,textTransform:"uppercase",textDecoration:"none"}}>{t.more} â†’</a></div>
-</div></FI>)}
-</div></div></section>
+      {/* HERO */}
+      <section style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",textAlign:"center",padding:"120px 6% 80px",position:"relative"}}>
+        <div style={{position:"absolute",top:"35%",left:"50%",transform:"translate(-50%,-50%)",width:700,height:700,background:"radial-gradient(circle,rgba(197,164,85,0.055) 0%,transparent 70%)",pointerEvents:"none"}}/>
+        <div style={{maxWidth:860,position:"relative",zIndex:1}}>
+          <FI delay={0}>
+            <div style={{display:"inline-flex",alignItems:"center",gap:8,border:`1px solid ${C.border}`,padding:"6px 18px",marginBottom:36,fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:3,color:C.gold,textTransform:"uppercase"}}>
+              <span style={{width:5,height:5,borderRadius:"50%",background:C.gold,animation:"pulse 2s infinite"}}/>
+              Ecosistema Digital Latino · est. 2026
+            </div>
+          </FI>
+          <FI delay={0.1}>
+            <h1 className="hero-h" style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2.6rem,6vw,5rem)",fontWeight:300,color:C.white,lineHeight:1.08,marginBottom:16,letterSpacing:-1.5}}>
+              Invierte como una<br/><span style={{color:C.gold,fontWeight:600,fontStyle:"italic"}}>institución.</span>
+            </h1>
+          </FI>
+          <FI delay={0.2}>
+            <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(1.1rem,2.2vw,1.5rem)",fontWeight:300,color:C.lgray,marginBottom:52,letterSpacing:0.5}}>
+              Desde $100. Sin jerga. Sin excusas.
+            </p>
+          </FI>
+          <FI delay={0.3}>
+            {!done?(
+              <form onSubmit={handleSub} style={{display:"flex",maxWidth:480,margin:"0 auto 20px",border:`1px solid ${C.border}`,overflow:"hidden"}}>
+                <input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="tu@email.com"
+                  style={{flex:1,padding:"15px 20px",background:"rgba(255,255,255,0.03)",border:"none",color:C.white,fontFamily:"'DM Sans',sans-serif",fontSize:14,outline:"none"}}/>
+                <button type="submit" className="cta-gold"
+                  style={{padding:"15px 28px",background:C.gold,border:"none",color:C.black,fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:2,textTransform:"uppercase",fontWeight:700,cursor:"pointer",transition:"all 0.2s",whiteSpace:"nowrap"}}>
+                  {loading?"...":"Acceder →"}
+                </button>
+              </form>
+            ):(
+              <div style={{maxWidth:480,margin:"0 auto 20px",padding:"16px",border:`1px solid rgba(197,164,85,0.3)`,fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.gold,textAlign:"center"}}>
+                ✓ Bienvenido — revisa tu email
+              </div>
+            )}
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray,letterSpacing:1}}>Sin spam · Sin tarjeta · Acceso inmediato</p>
+          </FI>
+          <FI delay={0.4}>
+            <div style={{display:"flex",gap:16,justifyContent:"center",marginTop:44,flexWrap:"wrap"}}>
+              <a href="/academia" className="cta-gold" style={{padding:"14px 40px",background:C.gold,color:C.black,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:2.5,textTransform:"uppercase",fontWeight:700,transition:"all 0.2s"}}>
+                Ver Academia
+              </a>
+              <a href="#sistema" className="cta-outline" style={{padding:"14px 40px",border:`1px solid rgba(197,164,85,0.3)`,color:C.lgray,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:2.5,textTransform:"uppercase",transition:"all 0.2s"}}>
+                Cómo funciona ↓
+              </a>
+            </div>
+          </FI>
+        </div>
+        <div style={{position:"absolute",bottom:40,left:"50%",transform:"translateX(-50%)",animation:"float 3s ease-in-out infinite",opacity:0.35}}>
+          <div style={{width:1,height:50,background:`linear-gradient(to bottom,${C.gold},transparent)`,margin:"0 auto"}}/>
+        </div>
+      </section>
 
-<section id="education" style={{padding:"120px 5%",background:C.black}}>
-<div style={{maxWidth:1280,margin:"0 auto"}}>
-<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:5,color:C.accent,textTransform:"uppercase",marginBottom:20}}>{t.proc}</div></FI>
-<FI delay={0.1}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(32px,4vw,56px)",fontWeight:300,color:C.white,margin:"0 0 80px",lineHeight:1.15}}>{t.pr1}<br/><span style={{fontWeight:600}}>{t.pr2}</span></h2></FI>
-<div className="g3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:60}}>
-{steps.map((s,i)=><FI key={i} delay={0.15+i*0.15}><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:72,fontWeight:300,color:`${C.accent}22`,lineHeight:1,marginBottom:20}}>{s.n}</div><h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:600,color:C.white,margin:"0 0 16px"}}>{s.t}</h3><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.gray,lineHeight:1.8}}>{s.d}</p></div></FI>)}
-</div></div></section>
+      {/* STATS */}
+      <section style={{padding:"56px 6%",borderTop:`1px solid ${C.border}`,borderBottom:`1px solid ${C.border}`}}>
+        <div style={{maxWidth:1280,margin:"0 auto"}}>
+          <div className="stats-g" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:1}}>
+            {STATS.map((s,i)=>(
+              <FI key={i} delay={i*0.07}>
+                <div style={{padding:"32px 20px",textAlign:"center",borderRight:i<3?`1px solid ${C.border}`:"none",transition:"background 0.2s"}}>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:44,fontWeight:600,color:C.gold,marginBottom:8}}>{s.n}</div>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:C.gray,letterSpacing:2.5,textTransform:"uppercase"}}>{s.l}</div>
+                </div>
+              </FI>
+            ))}
+          </div>
+        </div>
+      </section>
 
-<section id="start" style={{padding:"120px 5%",background:`linear-gradient(180deg,${C.black},${C.dark} 50%,${C.black})`,position:"relative"}}>
-<div style={{position:"absolute",top:"50%",left:"50%",width:500,height:500,background:`radial-gradient(circle,${C.accent}08,transparent 70%)`,transform:"translate(-50%,-50%)",borderRadius:"50%"}}/>
-<div style={{maxWidth:640,margin:"0 auto",textAlign:"center",position:"relative"}}>
-<FI><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:5,color:C.accent,textTransform:"uppercase",marginBottom:20}}>{t.ct}</div></FI>
-<FI delay={0.1}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(32px,4vw,48px)",fontWeight:300,color:C.white,margin:"0 0 20px",lineHeight:1.2}}>{t.ct1} <span style={{fontWeight:600}}>{t.ct2}</span></h2></FI>
-<FI delay={0.2}><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,color:C.gray,lineHeight:1.7,margin:"0 0 40px"}}>{t.ctd}</p></FI>
-<FI delay={0.3}>{!done?<div style={{display:"flex",gap:0,maxWidth:480,margin:"0 auto",flexWrap:"wrap"}}>
-<input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder={t.ph} style={{flex:1,minWidth:200,padding:"16px 20px",background:"rgba(255,255,255,0.05)",border:`1px solid ${C.border}`,borderRight:"none",color:C.white,fontFamily:"'DM Sans',sans-serif",fontSize:14,outline:"none"}}/>
-<button onClick={()=>{if(email.includes("@"))setDone(true)}} style={{padding:"16px 32px",background:C.accent,border:"none",color:C.black,fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:2,textTransform:"uppercase",fontWeight:600,cursor:"pointer"}}>{t.sub}</button>
-</div>:<div style={{padding:"20px 32px",border:`1px solid ${C.accent}44`,fontFamily:"'DM Sans',sans-serif",fontSize:15,color:C.accent}}>{t.thx}</div>}</FI>
-</div></section>
+      {/* PERSONAJES */}
+      <section id="sistema" style={{padding:"100px 6%"}}>
+        <div style={{maxWidth:1280,margin:"0 auto"}}>
+          <FI>
+            <div style={{textAlign:"center",marginBottom:72}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:4,color:C.gold,textTransform:"uppercase",marginBottom:16}}>El Sistema</div>
+              <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2rem,4vw,3.2rem)",fontWeight:300,color:C.white,letterSpacing:-0.5}}>
+                Cuatro guardianes.<br/><span style={{color:C.gold,fontStyle:"italic"}}>Un ecosistema.</span>
+              </h2>
+            </div>
+          </FI>
+          <div className="chars-g" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:20}}>
+            {CHARS.map((ch,i)=>(
+              <FI key={i} delay={i*0.1}>
+                <div className="char-card" style={{padding:"40px",border:`1px solid ${C.border}`,background:C.card,position:"relative",overflow:"hidden"}}>
+                  <div style={{position:"absolute",top:0,right:0,width:180,height:180,background:`radial-gradient(circle at top right,${ch.color}09,transparent 70%)`,pointerEvents:"none"}}/>
+                  <div style={{fontSize:28,color:ch.color,marginBottom:18}}>{ch.icon}</div>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:3.5,color:ch.color,textTransform:"uppercase",marginBottom:8}}>{ch.tag}</div>
+                  <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:500,color:C.white,marginBottom:4}}>{ch.name}</h3>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:C.gray,marginBottom:16,fontStyle:"italic"}}>{ch.role}</div>
+                  <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.lgray,lineHeight:1.75}}>{ch.desc}</p>
+                </div>
+              </FI>
+            ))}
+          </div>
+        </div>
+      </section>
 
-<footer id="about" style={{padding:"60px 5% 40px",background:C.black,borderTop:`1px solid ${C.border}`}}>
-<div style={{maxWidth:1280,margin:"0 auto"}}>
-<div className="fc" style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:48,flexWrap:"wrap",gap:40}}>
-<div><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><div style={{width:32,height:32,border:`1.5px solid ${C.accent}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cormorant Garamond',serif",fontWeight:700,fontSize:16,color:C.accent}}>V</div><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:600,color:C.white,letterSpacing:2}}>VENBRA TECH</span></div><p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.gray,maxWidth:300,lineHeight:1.6}}>{t.fd}</p></div>
-<div style={{display:"flex",gap:60,flexWrap:"wrap"}}>{[{t:t.n[0],l:["eToro","Arrived Homes","Fundrise"]},{t:t.n[1],l:["Blog","FAQ","Guides"]},{t:"Legal",l:["Privacy Policy","Terms","Disclaimer"]}].map((c,i)=><div key={i}><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:3,color:C.accent,textTransform:"uppercase",marginBottom:16}}>{c.t}</div>{c.l.map((x,j)=><a key={j} href="#" style={{display:"block",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.gray,textDecoration:"none",marginBottom:10}}>{x}</a>)}</div>)}</div>
-</div>
-<div style={{padding:"24px 0",marginTop:24,borderTop:`1px solid ${C.border}`}}>
-<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray,lineHeight:1.8,margin:"0 0 16px",maxWidth:900}}><span style={{color:C.accent,fontWeight:600}}>{t.dl}</span> {t.dis}</p>
-<div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:16}}><span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(139,139,139,0.53)"}}>Â© 2026 VenBra Tech</span><span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(139,139,139,0.53)"}}>alfonso@venbratech.com</span></div>
-</div></div></footer>
-</div>}
+      {/* ACADEMIA */}
+      <section style={{padding:"80px 6%",background:"rgba(197,164,85,0.025)",borderTop:`1px solid ${C.border}`,borderBottom:`1px solid ${C.border}`}}>
+        <div style={{maxWidth:860,margin:"0 auto",textAlign:"center"}}>
+          <FI>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:4,color:C.gold,textTransform:"uppercase",marginBottom:20}}>Academia Digital Latina</div>
+            <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(1.8rem,3.5vw,2.9rem)",fontWeight:300,color:C.white,marginBottom:20,letterSpacing:-0.3}}>
+              14 verticales. Una plataforma.<br/><span style={{color:C.gold,fontStyle:"italic"}}>Tu acceso, gratuito.</span>
+            </h2>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,color:C.lgray,maxWidth:560,margin:"0 auto 40px",lineHeight:1.85}}>
+              Finanzas · Datos · IA · Automatización · Marketing · Negocios · Real Estate · Crypto y 6 ejes más. Sistema de matching por perfil.
+            </p>
+            <a href="/academia" className="cta-gold" style={{display:"inline-block",padding:"16px 52px",background:C.gold,color:C.black,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",fontWeight:700,transition:"all 0.2s"}}>
+              Acceder Gratis →
+            </a>
+          </FI>
+        </div>
+      </section>
 
+      {/* B2B */}
+      <section id="b2b" style={{padding:"100px 6%"}}>
+        <div style={{maxWidth:1280,margin:"0 auto"}}>
+          <div className="b2b-g" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:80,alignItems:"center"}}>
+            <FI>
+              <div>
+                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:4,color:C.gold,textTransform:"uppercase",marginBottom:20}}>Para Empresas</div>
+                <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(1.8rem,3vw,2.7rem)",fontWeight:300,color:C.white,marginBottom:24,letterSpacing:-0.3}}>
+                  Gobernanza AI.<br/><span style={{color:C.gold,fontStyle:"italic"}}>Nivel institucional.</span>
+                </h2>
+                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.lgray,lineHeight:1.85,marginBottom:32}}>
+                  eco-lab_venbrax V5 — Suite empresarial: módulo forense SHA256, seguridad Zero-Trust, contratos inmutables. Para Roland Berger, GitLab y sector financiero.
+                </p>
+                {["Módulo Forense — trazabilidad SHA256","Seguridad Zero-Trust autónoma","Contratos JSON Schema 2020-12"].map((f,i)=>(
+                  <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:10}}>
+                    <span style={{color:C.gold,marginTop:2,fontSize:10}}>◆</span>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.lgray}}>{f}</span>
+                  </div>
+                ))}
+                <a href="mailto:hola@venbratech.com?subject=B2B VenBraTech eco-lab V5"
+                  className="cta-outline" style={{display:"inline-block",marginTop:32,padding:"14px 36px",border:`1px solid rgba(197,164,85,0.4)`,color:C.gold,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:2.5,textTransform:"uppercase",transition:"all 0.2s"}}>
+                  Agendar 25 min →
+                </a>
+              </div>
+            </FI>
+            <FI delay={0.15}>
+              <div className="price-g" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
+                {[{n:"$499",l:"Starter",s:"/mes"},{n:"$999",l:"Pro",s:"/mes",hot:true},{n:"$1,999",l:"Enterprise",s:"/mes"},{n:"Custom",l:"Roland Berger",s:""}].map((p,i)=>(
+                  <div key={i} style={{padding:"28px 18px",border:`1px solid ${i===1?"rgba(197,164,85,0.5)":C.border}`,background:i===1?"rgba(197,164,85,0.07)":C.card,textAlign:"center",position:"relative"}}>
+                    {i===1&&<div style={{position:"absolute",top:-1,left:"50%",transform:"translateX(-50%)",background:C.gold,padding:"3px 14px",fontSize:8,letterSpacing:2.5,color:C.black,fontWeight:700,textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif",whiteSpace:"nowrap"}}>POPULAR</div>}
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,color:C.gold,fontWeight:600}}>{p.n}<span style={{fontSize:12,color:C.gray,fontWeight:300}}>{p.s}</span></div>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray,letterSpacing:1,marginTop:6}}>{p.l}</div>
+                  </div>
+                ))}
+              </div>
+            </FI>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{padding:"60px 6% 36px",borderTop:`1px solid ${C.border}`}}>
+        <div style={{maxWidth:1280,margin:"0 auto"}}>
+          <div className="foot-g" style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:40,marginBottom:48}}>
+            <div style={{maxWidth:300}}>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600,color:C.gold,letterSpacing:2,marginBottom:12}}>VENBRATECH</div>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.gray,lineHeight:1.75}}>Ecosistema digital latino. Educación institucional, automatización AI y gobernanza empresarial.</p>
+            </div>
+            <div style={{display:"flex",gap:56,flexWrap:"wrap"}}>
+              {[
+                {t:"Plataforma",ls:[{l:"Academia",h:"/academia"},{l:"Sistema",h:"#sistema"},{l:"B2B",h:"#b2b"}]},
+                {t:"Legal",ls:[{l:"Privacidad",h:"/privacidad"},{l:"Términos",h:"/terminos"}]},
+                {t:"Contacto",ls:[{l:"hola@venbratech.com",h:"mailto:hola@venbratech.com"}]},
+              ].map((col,i)=>(
+                <div key={i}>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:3.5,color:C.gold,textTransform:"uppercase",marginBottom:16}}>{col.t}</div>
+                  {col.ls.map((lk,j)=>(
+                    <a key={j} href={lk.h} style={{display:"block",fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.gray,textDecoration:"none",marginBottom:10}}
+                      onMouseOver={e=>(e.currentTarget.style.color=C.gold)}
+                      onMouseOut={e=>(e.currentTarget.style.color=C.gray)}>{lk.l}</a>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{borderTop:`1px solid ${C.border}`,paddingTop:24,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray}}>© 2026 VenBraTech · Santa Catarina, Brasil</div>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray,maxWidth:580,lineHeight:1.6}}>
+              VenBra Tech opera exclusivamente como plataforma de referidos y educación. No somos asesores de inversión registrados. Todas las inversiones conllevan riesgo.
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
