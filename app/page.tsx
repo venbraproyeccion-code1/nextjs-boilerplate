@@ -59,12 +59,10 @@ export default function Home(){
     e.preventDefault();if(!email||done)return;
     setLoading(true);
     try{
-      await fetch("https://xshannxyjzrhgnsqmhun.supabase.co/rest/v1/financial_leads",{
+      await fetch("https://xshannxyjzrhgnsqmhun.supabase.co/functions/v1/register-member",{
         method:"POST",
-        headers:{"Content-Type":"application/json",
-          "apikey":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaGFubnhZanpyaGduc3FtaHVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NzcxMTIsImV4cCI6MjAzMTU1MzExMn0.Ym8gDxUPz-eF3cQ1GQ5Q_HLVHRnfVHqnDPVOYXp6ARk",
-          "Prefer":"return=minimal"},
-        body:JSON.stringify({email,source:"venbratech_home_v2",status:"new"})
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({email,utm_source:"venbratech_home_v2"})
       });
     }catch(_){}
     setLoading(false);setDone(true);setEmail("");
