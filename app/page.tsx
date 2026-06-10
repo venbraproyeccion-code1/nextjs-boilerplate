@@ -104,8 +104,8 @@ export default function Home(){
             <span style={{fontSize:9,color:C.gray,letterSpacing:3,fontFamily:"'DM Sans',sans-serif",textTransform:"uppercase",marginTop:3}}>LAT</span>
           </a>
           <div className="hide-m" style={{display:"flex",gap:36,alignItems:"center"}}>
-            {["Sistema","Academia","B2B","Comunidad"].map((n,i)=>(
-              <a key={i} href={["#sistema","/academia","#b2b","/academia"][i]} className="nav-a"
+            {["Sistema","Academia","Industrial","B2B","Comunidad"].map((n,i)=>(
+              <a key={i} href={["#sistema","/academia","/industrial","#b2b","/academia"][i]} className="nav-a"
                 style={{color:C.lgray,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:2.5,textTransform:"uppercase",transition:"color 0.2s"}}>
                 {n}
               </a>
@@ -245,7 +245,7 @@ export default function Home(){
                   Gobernanza AI.<br/><span style={{color:C.gold,fontStyle:"italic"}}>Nivel institucional.</span>
                 </h2>
                 <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.lgray,lineHeight:1.85,marginBottom:32}}>
-                  eco-lab_venbrax V5 — Suite empresarial: módulo forense SHA256, seguridad Zero-Trust, contratos inmutables. Construida sobre la misma tecnología que ya opera en el sector industrial brasileño.
+                  eco-lab_venbrax V5 — Suite empresarial: módulo forense SHA256, seguridad Zero-Trust, contratos inmutables. La misma tecnología de VenBraX Industrial, nuestro sistema de diagnóstico PLC en producción.
                 </p>
                 {["Módulo Forense — trazabilidad SHA256","Seguridad Zero-Trust autónoma","Contratos JSON Schema 2020-12"].map((f,i)=>(
                   <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:10}}>
@@ -284,7 +284,7 @@ export default function Home(){
             </div>
             <div style={{display:"flex",gap:56,flexWrap:"wrap"}}>
               {[
-                {t:"Plataforma",ls:[{l:"Academia",h:"/academia"},{l:"Sistema",h:"#sistema"},{l:"B2B",h:"#b2b"}]},
+                {t:"Plataforma",ls:[{l:"Academia",h:"/academia"},{l:"Industrial",h:"/industrial"},{l:"Sistema",h:"#sistema"},{l:"B2B",h:"#b2b"}]},
                 {t:"Legal",ls:[{l:"Privacidad",h:"/privacidad"},{l:"Términos",h:"/terminos"}]},
                 {t:"Contacto",ls:[{l:"hola@venbratech.com",h:"mailto:hola@venbratech.com"}]},
               ].map((col,i)=>(
