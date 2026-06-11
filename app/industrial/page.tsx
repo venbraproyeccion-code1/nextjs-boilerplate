@@ -7,7 +7,7 @@ const C = {
   gray: "#888", lgray: "#bbb", border: "rgba(197,164,85,0.15)",
 };
 
-const DEMO_URL = "https://primary-production-a1d21.up.railway.app/webhook/venbrax-industrial";
+const DEMO_URL = "/industrial-app.html";
 
 const PLCS = ["Siemens", "Allen-Bradley", "Schneider", "OMRON", "Mitsubishi"];
 
