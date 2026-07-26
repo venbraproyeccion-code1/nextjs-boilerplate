@@ -186,8 +186,8 @@ export default function Audit(){
         body:JSON.stringify({
           email:form.email,
           source:"audit_landing",
-          status:"audit_paid",
-          notas:`Company:${form.company} | Repo:${form.repo} | Notes:${form.notes}`
+          status:"audit_requested",
+          notas:`Company:${form.company} | Repo:${form.repo} | Notes:${form.notes} | Pago PayPal: PENDIENTE de confirmar manualmente`
         })
       });
     }catch(_){}
