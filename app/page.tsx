@@ -261,11 +261,11 @@ export default function Home(){
             </FI>
             <FI delay={0.15}>
               <div className="price-g" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
-                {[{n:"$499",l:"Starter",s:"/mes"},{n:"$999",l:"Pro",s:"/mes",hot:true},{n:"$1,999",l:"Enterprise",s:"/mes"},{n:"Custom",l:"A medida",s:""}].map((p,i)=>(
+                {[{t:"Auditoría gratuita",d:"Diagnóstico inicial sin costo"},{t:"Acceso anticipado",d:"Beta abierta, sin tarjeta",hot:true},{t:"Onboarding guiado",d:"Implementación acompañada"},{t:"Soporte directo",d:"Canal directo con el equipo"}].map((p,i)=>(
                   <div key={i} style={{padding:"28px 18px",border:`1px solid ${i===1?"rgba(197,164,85,0.5)":C.border}`,background:i===1?"rgba(197,164,85,0.07)":C.card,textAlign:"center",position:"relative"}}>
-                    {i===1&&<div style={{position:"absolute",top:-1,left:"50%",transform:"translateX(-50%)",background:C.gold,padding:"3px 14px",fontSize:8,letterSpacing:2.5,color:C.black,fontWeight:700,textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif",whiteSpace:"nowrap"}}>POPULAR</div>}
-                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,color:C.gold,fontWeight:600}}>{p.n}<span style={{fontSize:12,color:C.gray,fontWeight:300}}>{p.s}</span></div>
-                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray,letterSpacing:1,marginTop:6}}>{p.l}</div>
+                    {i===1&&<div style={{position:"absolute",top:-1,left:"50%",transform:"translateX(-50%)",background:C.gold,padding:"3px 14px",fontSize:8,letterSpacing:2.5,color:C.black,fontWeight:700,textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif",whiteSpace:"nowrap"}}>BETA</div>}
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,color:C.gold,fontWeight:600,lineHeight:1.3}}>{p.t}</div>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.gray,letterSpacing:1,marginTop:8}}>{p.d}</div>
                   </div>
                 ))}
               </div>
@@ -284,7 +284,7 @@ export default function Home(){
             </div>
             <div style={{display:"flex",gap:56,flexWrap:"wrap"}}>
               {[
-                {t:"Plataforma",ls:[{l:"Academia",h:"/academia"},{l:"Industrial",h:"/industrial"},{l:"Sistema",h:"#sistema"},{l:"B2B",h:"#b2b"}]},
+                {t:"Plataforma",ls:[{l:"Academia",h:"/academia"},{l:"Industrial",h:"/industrial"},{l:"Hub Legal",h:"/hub-legal"},{l:"Auditoría IA",h:"/audit"},{l:"Sistema",h:"#sistema"},{l:"B2B",h:"#b2b"}]},
                 {t:"Legal",ls:[{l:"Privacidad",h:"/privacidad"},{l:"Términos",h:"/terminos"}]},
                 {t:"Contacto",ls:[{l:"hola@venbratech.com",h:"mailto:hola@venbratech.com"}]},
               ].map((col,i)=>(

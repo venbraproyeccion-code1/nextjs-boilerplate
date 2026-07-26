@@ -14,12 +14,6 @@ type Audit = { id: string; name: string; status: string; risk_score: number; sum
 
 const STATUS_COLOR: Record<string, string> = { aprobado: C.success, revision: C.warning, alerta: C.danger };
 
-function daysLeft(trialStart: string) {
-  const started = new Date(trialStart).getTime();
-  const elapsed = (Date.now() - started) / (1000 * 60 * 60 * 24);
-  return Math.max(0, Math.ceil(30 - elapsed));
-}
-
 export default function Dashboard() {
   const router = useRouter();
   const [org, setOrg] = useState<Org | null>(null);
@@ -74,8 +68,7 @@ export default function Dashboard() {
   if (loading) return <div style={{ background: C.black, minHeight: "100vh" }} />;
 
   const trialActive = org?.subscription_status === "trial";
-  const remaining = org ? daysLeft(org.trial_started_at) : 0;
-  const trialExpired = trialActive && remaining <= 0;
+  const trialExpired = false;
 
   return (
     <div style={{ background: C.black, minHeight: "100vh", color: C.white, padding: "3rem 1.5rem" }}>
@@ -83,14 +76,9 @@ export default function Dashboard() {
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
         <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 32 }}>{org?.name}</div>
 
-        {trialExpired ? (
-          <div style={{ background: "rgba(192,89,75,0.12)", border: `1px solid ${C.danger}`, borderRadius: 12, padding: 24, marginTop: 20, fontFamily: "'DM Sans', sans-serif" }}>
-            <div style={{ fontWeight: 600, marginBottom: 8 }}>Tu prueba gratuita terminó</div>
-            <div style={{ color: C.lgray, fontSize: 14 }}>Suscríbete por $20 USD/mes para seguir usando el Hub Legal.</div>
-          </div>
-        ) : trialActive ? (
+        {trialActive ? (
           <div style={{ color: C.gold, fontFamily: "'DM Sans', sans-serif", fontSize: 14, marginTop: 8 }}>
-            {remaining} días restantes de tu prueba gratuita
+            Acceso gratuito activo — sin límite de tiempo
           </div>
         ) : null}
 

@@ -10,7 +10,7 @@ const FEATURES = [
   { i: "◈", t: "Auditoría con IA", d: "Sube un documento legal y recibe un análisis de riesgo estructurado en segundos: aprobado, en revisión o alerta." },
   { i: "⬡", t: "Multi-cliente", d: "Cada despacho tiene su propio espacio aislado. Tus documentos y los de otro estudio nunca se mezclan." },
   { i: "◉", t: "Panel simple", d: "Sin curva de aprendizaje. Métricas, auditorías y pagos en un solo panel, pensado para quien no es técnico." },
-  { i: "⬢", t: "30 días gratis", d: "Prueba el sistema completo un mes. Sin tarjeta, sin compromiso. Después, $20 USD/mes por despacho." },
+  { i: "⬢", t: "100% gratuito", d: "Acceso completo mientras el sistema está en beta. Sin tarjeta, sin compromiso, sin límite de tiempo." },
 ];
 
 export default function HubLegal() {
