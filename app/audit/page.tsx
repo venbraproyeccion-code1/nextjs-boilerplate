@@ -206,6 +206,13 @@ export default function Audit(){
         })
       });
 
+      // Lead scoring: fire-and-forget, no bloquea ni puede romper el flujo de pago.
+      fetch("/api/leads/score",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({leadId, text:`${form.company}\n${form.repo}\n${form.notes}`})
+      }).catch(()=>{});
+
       if(leadId){
         // Crear la preferencia real de cobro en Mercado Pago y redirigir al checkout.
         // Redirige la MISMA pestaña (no window.open) porque los navegadores bloquean
