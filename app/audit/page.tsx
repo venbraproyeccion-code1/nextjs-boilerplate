@@ -184,15 +184,19 @@ export default function Audit(){
     e.preventDefault();
     setLoading(true);
     try{
-      // Guardar lead en Supabase - return=representation para recuperar el id real
-      const leadRes = await fetch("https://xshannxyjzrhgnsqmhun.supabase.co/rest/v1/financial_leads",{
+      // Generamos el id nosotros mismos: pedirle a Supabase que lo devuelva
+      // (Prefer: return=representation) choca con la política RLS de anon
+      // (permite INSERT pero no el SELECT implícito del RETURNING).
+      const leadId = crypto.randomUUID();
+      await fetch("https://xshannxyjzrhgnsqmhun.supabase.co/rest/v1/financial_leads",{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
           "apikey":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaGFubnh5anpyaGduc3FtaHVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDcwODUsImV4cCI6MjA5MTU4MzA4NX0.l6wJsUAYSVE6RAZn-unPPMsGprrzXmBHy7y7wHrWfBw",
-          "Prefer":"return=representation"
+          "Prefer":"return=minimal"
         },
         body:JSON.stringify({
+          id:leadId,
           nombre:form.company,
           correo_electronico:form.email,
           fuente:"audit_landing",
@@ -201,8 +205,6 @@ export default function Audit(){
           notas:`Repo:${form.repo} | Notes:${form.notes}`
         })
       });
-      const leadRows = await leadRes.json().catch(()=>[]);
-      const leadId = leadRows?.[0]?.id;
 
       if(leadId){
         // Crear la preferencia real de cobro en Mercado Pago y redirigir al checkout
