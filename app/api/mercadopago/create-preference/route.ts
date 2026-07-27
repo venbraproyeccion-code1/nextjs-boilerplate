@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
+// Precio real confirmado por Alfonso (2026-07-27): lanzamiento R$97, precio normal R$197
+// (el R$197 solo se usa en el copy de la página, no en el cobro). Mismo número que
+// se muestra en app/audit/page.tsx - si se cambia el precio, actualizar ambos lados.
+const AUDIT_PRICE_BRL = 97;
+
 export async function POST(req: NextRequest) {
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
-  const priceBRL = process.env.MERCADOPAGO_AUDIT_PRICE_BRL;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://venbratech.com";
 
   if (!accessToken) {
     return NextResponse.json({ error: "MERCADOPAGO_ACCESS_TOKEN no configurado" }, { status: 500 });
-  }
-  if (!priceBRL) {
-    // Fail closed a propósito: sin precio real en BRL confirmado no se crea ninguna preferencia de cobro.
-    return NextResponse.json({ error: "MERCADOPAGO_AUDIT_PRICE_BRL no configurado" }, { status: 500 });
   }
 
   const body = await req.json().catch(() => null);
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       {
         title: "VenBraX AI Security Audit",
         quantity: 1,
-        unit_price: Number(priceBRL),
+        unit_price: AUDIT_PRICE_BRL,
         currency_id: "BRL",
       },
     ],
