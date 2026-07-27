@@ -20,12 +20,15 @@ const T = {
     h1c: "Solo que todavía no lo sabés.",
     lead: "Auditamos tu pipeline de IA en 48 horas. Informe forense completo con hallazgos verificados por SHA256, puntajes de severidad y hoja de ruta de remediación. ",
     leadStrong: "Garantía de devolución si no encontramos nada crítico.",
-    ctaMain: "Auditame — $497 →",
+    priceWas: "De R$ 197 por",
+    priceNow: "R$ 97",
+    priceTag: "Precio de lanzamiento – solo esta semana",
+    ctaMain: "Auditame — R$ 97 →",
     ctaSub: "Pago único · Entrega en 48h · Informe PDF completo · Garantía de devolución",
     stats: [
       { n:"94%", l:"de los pipelines de IA pierden contexto crítico" },
       { n:"48h", l:"de entrega del informe forense" },
-      { n:"$0", l:"si no encontramos nada crítico" },
+      { n:"R$0", l:"si no encontramos nada crítico" },
       { n:"SHA256", l:"verificación criptográfica" },
       { n:"Corte UE", l:"estándar de evidencia admisible" },
       { n:"V5", l:"suite empresarial eco-lab" },
@@ -40,7 +43,7 @@ const T = {
     ],
     howTitle: "Cómo funciona",
     steps: [
-      { n:"01", t:"Pagá y Enviá", d:"Pago seguro vía PayPal. Enviá tu repo de GitHub o la URL de tu endpoint de API." },
+      { n:"01", t:"Pagá y Enviá", d:"Pago seguro vía Mercado Pago. Enviá tu repo de GitHub o la URL de tu endpoint de API." },
       { n:"02", t:"Auditoría Profunda 48h", d:"El agente Vigía escanea tu pipeline de IA. Cada evento de decisión capturado, verificado con hash y analizado." },
       { n:"03", t:"Informe Forense", d:"Informe PDF completo con hallazgos, puntajes de severidad y hoja de ruta de remediación. Admisible en cortes de la UE." },
     ],
@@ -57,10 +60,10 @@ const T = {
     fNotes: "Contexto adicional (opcional)",
     fNotesPh: "Stack, dudas específicas, plazo...",
     processing: "Procesando...",
-    payBtn: "Pagar $497 e Iniciar Auditoría →",
-    formFoot: "Pago seguro vía PayPal · Garantía de devolución · Entrega en 48h",
+    payBtn: "Pagar R$ 97 e Iniciar Auditoría →",
+    formFoot: "Pago seguro vía Mercado Pago · Garantía de devolución · Entrega en 48h",
     doneTitle: "Solicitud de Auditoría Recibida",
-    donePre: "Completá tu pago de PayPal en la nueva pestaña. Una vez confirmado, comenzamos tu auditoría forense de 48 horas. Informe entregado a ",
+    donePre: "Completá tu pago en Mercado Pago en la nueva pestaña. Una vez confirmado, comenzamos tu auditoría forense de 48 horas. Informe entregado a ",
   },
   en: {
     slots: "AUDITS OPEN · 3 slots left",
@@ -70,12 +73,15 @@ const T = {
     h1c: "You just don't know it yet.",
     lead: "We audit your AI pipeline in 48 hours. Full forensic report with SHA256-verified findings, severity scores, and remediation roadmap. ",
     leadStrong: "Money-back guarantee if we find nothing critical.",
-    ctaMain: "Get Audited — $497 →",
+    priceWas: "From R$ 197 for",
+    priceNow: "R$ 97",
+    priceTag: "Launch price – this week only",
+    ctaMain: "Get Audited — R$ 97 →",
     ctaSub: "One-time payment · 48h delivery · Full PDF report · Money-back guarantee",
     stats: [
       { n:"94%", l:"of AI pipelines have critical context loss" },
       { n:"48h", l:"forensic report delivery" },
-      { n:"$0", l:"if we find nothing critical" },
+      { n:"R$0", l:"if we find nothing critical" },
       { n:"SHA256", l:"cryptographic verification" },
       { n:"EU Court", l:"admissible evidence standard" },
       { n:"V5", l:"eco-lab enterprise suite" },
@@ -90,7 +96,7 @@ const T = {
     ],
     howTitle: "How it works",
     steps: [
-      { n:"01", t:"Pay & Submit", d:"Secure payment via PayPal. Submit your GitHub repo or API endpoint URL." },
+      { n:"01", t:"Pay & Submit", d:"Secure payment via Mercado Pago. Submit your GitHub repo or API endpoint URL." },
       { n:"02", t:"48h Deep Audit", d:"Vigía agent scans your AI pipeline. Every decision event captured, hashed, analyzed." },
       { n:"03", t:"Forensic Report", d:"Full PDF report with findings, severity scores, and remediation roadmap. Admissible in EU courts." },
     ],
@@ -107,10 +113,10 @@ const T = {
     fNotes: "Additional context (optional)",
     fNotesPh: "Stack, specific concerns, deadline...",
     processing: "Processing...",
-    payBtn: "Pay $497 & Start Audit →",
-    formFoot: "Secure payment via PayPal · Money-back guarantee · 48h delivery",
+    payBtn: "Pay R$ 97 & Start Audit →",
+    formFoot: "Secure payment via Mercado Pago · Money-back guarantee · 48h delivery",
     doneTitle: "Audit Request Received",
-    donePre: "Complete your PayPal payment in the new tab. Once confirmed, we'll begin your 48-hour forensic audit. Report delivered to ",
+    donePre: "Complete your Mercado Pago payment in the new tab. Once confirmed, we'll begin your 48-hour forensic audit. Report delivered to ",
   },
   pt: {
     slots: "AUDITORIAS ABERTAS · Restam 3 vagas",
@@ -120,12 +126,15 @@ const T = {
     h1c: "Você só não sabe ainda.",
     lead: "Auditamos seu pipeline de IA em 48 horas. Relatório forense completo com achados verificados por SHA256, pontuações de severidade e plano de remediação. ",
     leadStrong: "Garantia de reembolso se não encontrarmos nada crítico.",
-    ctaMain: "Audite-me — $497 →",
+    priceWas: "De R$ 197 por",
+    priceNow: "R$ 97",
+    priceTag: "Preço de lançamento – só esta semana",
+    ctaMain: "Audite-me — R$ 97 →",
     ctaSub: "Pagamento único · Entrega em 48h · Relatório PDF completo · Garantia de reembolso",
     stats: [
       { n:"94%", l:"dos pipelines de IA têm perda crítica de contexto" },
       { n:"48h", l:"de entrega do relatório forense" },
-      { n:"$0", l:"se não encontrarmos nada crítico" },
+      { n:"R$0", l:"se não encontrarmos nada crítico" },
       { n:"SHA256", l:"verificação criptográfica" },
       { n:"Corte UE", l:"padrão de evidência admissível" },
       { n:"V5", l:"suíte empresarial eco-lab" },
@@ -140,7 +149,7 @@ const T = {
     ],
     howTitle: "Como funciona",
     steps: [
-      { n:"01", t:"Pague e Envie", d:"Pagamento seguro via PayPal. Envie seu repositório GitHub ou URL do endpoint de API." },
+      { n:"01", t:"Pague e Envie", d:"Pagamento seguro via Mercado Pago. Envie seu repositório GitHub ou URL do endpoint de API." },
       { n:"02", t:"Auditoria Profunda 48h", d:"O agente Vigía escaneia seu pipeline de IA. Cada evento de decisão capturado, com hash e analisado." },
       { n:"03", t:"Relatório Forense", d:"Relatório PDF completo com achados, pontuações de severidade e plano de remediação. Admissível em tribunais da UE." },
     ],
@@ -157,10 +166,10 @@ const T = {
     fNotes: "Contexto adicional (opcional)",
     fNotesPh: "Stack, dúvidas específicas, prazo...",
     processing: "Processando...",
-    payBtn: "Pagar $497 e Iniciar Auditoria →",
-    formFoot: "Pagamento seguro via PayPal · Garantia de reembolso · Entrega em 48h",
+    payBtn: "Pagar R$ 97 e Iniciar Auditoria →",
+    formFoot: "Pagamento seguro via Mercado Pago · Garantia de reembolso · Entrega em 48h",
     doneTitle: "Solicitação de Auditoria Recebida",
-    donePre: "Complete seu pagamento no PayPal na nova aba. Após a confirmação, iniciamos sua auditoria forense de 48 horas. Relatório entregue para ",
+    donePre: "Complete seu pagamento no Mercado Pago na nova aba. Após a confirmação, iniciamos sua auditoria forense de 48 horas. Relatório entregue para ",
   },
 } as const;
 
@@ -174,27 +183,40 @@ export default function Audit(){
   const handleSubmit=async(e:React.FormEvent)=>{
     e.preventDefault();
     setLoading(true);
-    // Guardar lead en Supabase
     try{
-      await fetch("https://xshannxyjzrhgnsqmhun.supabase.co/rest/v1/financial_leads",{
+      // Guardar lead en Supabase - return=representation para recuperar el id real
+      const leadRes = await fetch("https://xshannxyjzrhgnsqmhun.supabase.co/rest/v1/financial_leads",{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
           "apikey":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaGFubnh5anpyaGduc3FtaHVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDcwODUsImV4cCI6MjA5MTU4MzA4NX0.l6wJsUAYSVE6RAZn-unPPMsGprrzXmBHy7y7wHrWfBw",
-          "Prefer":"return=minimal"
+          "Prefer":"return=representation"
         },
         body:JSON.stringify({
           nombre:form.company,
           correo_electronico:form.email,
           fuente:"audit_landing",
           estado:"nuevo",
-          amount:497,
-          notas:`Repo:${form.repo} | Notes:${form.notes} | Pago PayPal: PENDIENTE de confirmar manualmente`
+          amount:97,
+          notas:`Repo:${form.repo} | Notes:${form.notes}`
         })
       });
+      const leadRows = await leadRes.json().catch(()=>[]);
+      const leadId = leadRows?.[0]?.id;
+
+      if(leadId){
+        // Crear la preferencia real de cobro en Mercado Pago y redirigir al checkout
+        const prefRes = await fetch("/api/mercadopago/create-preference",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({leadId, email:form.email, company:form.company})
+        });
+        const prefData = await prefRes.json().catch(()=>null);
+        if(prefData?.init_point){
+          window.open(prefData.init_point,"_blank");
+        }
+      }
     }catch(_){}
-    // Redirect to PayPal
-    window.open(`https://www.paypal.com/paypalme/venbraproyeccion/497USD`,"_blank");
     setStep(1);
     setLoading(false);
   };
@@ -245,6 +267,11 @@ export default function Audit(){
         <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:16,color:C.lgray,maxWidth:640,margin:"0 auto 48px",lineHeight:1.85}}>
           {t.lead}<strong style={{color:C.white}}>{t.leadStrong}</strong>
         </p>
+        <div style={{marginBottom:20,fontFamily:"'DM Sans',sans-serif"}}>
+          <span style={{fontSize:14,color:C.gray,textDecoration:"line-through",marginRight:8}}>{t.priceWas}</span>
+          <span style={{fontSize:20,color:C.gold,fontWeight:700}}>{t.priceNow}</span>
+          <div style={{fontSize:11,color:C.red,letterSpacing:1,textTransform:"uppercase",marginTop:4}}>{t.priceTag}</div>
+        </div>
         <a href="#audit-form" style={{display:"inline-block",padding:"16px 52px",background:C.gold,color:C.black,textDecoration:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:3,textTransform:"uppercase",fontWeight:700,transition:"all 0.2s"}}>
           {t.ctaMain}
         </a>
@@ -339,6 +366,11 @@ export default function Audit(){
                   value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}
                   rows={3}
                   style={{width:"100%",padding:"14px 16px",background:"rgba(255,255,255,0.04)",border:`1px solid ${C.border}`,color:C.white,fontFamily:"'DM Sans',sans-serif",fontSize:14,resize:"none"}}/>
+              </div>
+              <div style={{textAlign:"center",fontFamily:"'DM Sans',sans-serif"}}>
+                <span style={{fontSize:13,color:C.gray,textDecoration:"line-through",marginRight:6}}>{t.priceWas}</span>
+                <span style={{fontSize:16,color:C.gold,fontWeight:700}}>{t.priceNow}</span>
+                <span style={{fontSize:11,color:C.red,marginLeft:8,textTransform:"uppercase"}}>{t.priceTag}</span>
               </div>
               <button type="submit" className="btn-gold"
                 style={{padding:"18px",background:C.gold,border:"none",color:C.black,fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:3,textTransform:"uppercase",fontWeight:700,cursor:"pointer",transition:"all 0.2s",marginTop:8}}>
