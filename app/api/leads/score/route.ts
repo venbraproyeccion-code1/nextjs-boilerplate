@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-// Endpoint de lead scoring vectorial (fase 1: solo genera y devuelve el embedding real).
+const SUPABASE_URL = "https://xshannxyjzrhgnsqmhun.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaGFubnh5anpyaGduc3FtaHVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMDcwODUsImV4cCI6MjA5MTU4MzA4NX0.l6wJsUAYSVE6RAZn-unPPMsGprrzXmBHy7y7wHrWfBw";
+
+// Endpoint de lead scoring vectorial (fase 1: genera y guarda el embedding real).
 // A propósito NO clasifica todavía (Corporate/Qualified/Cold) - no hay ejemplos reales
 // en corporate_examples para calibrar umbrales, y umbrales inventados no sirven de nada.
+// Se llama sin bloquear el flujo de pago (fire-and-forget desde /audit).
 export async function POST(req: NextRequest) {
   const apiKey = process.env.NVIDIA_API_KEY;
   if (!apiKey) {
@@ -13,6 +18,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => null);
   const text = body?.text;
+  const leadId = body?.leadId;
   if (!text) {
     return NextResponse.json({ error: "text es requerido" }, { status: 400 });
   }
@@ -36,8 +42,26 @@ export async function POST(req: NextRequest) {
   }
 
   const embedding = data?.data?.[0]?.embedding;
-  return NextResponse.json({
-    dimension: Array.isArray(embedding) ? embedding.length : null,
-    model: data?.model ?? "nvidia/nv-embedqa-e5-v5",
-  });
+  const dimension = Array.isArray(embedding) ? embedding.length : null;
+
+  let stored = false;
+  if (leadId && embedding) {
+    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/lead_embeddings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        lead_id: leadId,
+        embedding,
+        model: "nvidia/nv-embedqa-e5-v5",
+      }),
+    });
+    stored = insertRes.ok;
+  }
+
+  return NextResponse.json({ dimension, model: data?.model ?? "nvidia/nv-embedqa-e5-v5", stored });
 }
