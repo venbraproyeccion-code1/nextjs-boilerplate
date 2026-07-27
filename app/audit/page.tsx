@@ -184,10 +184,12 @@ export default function Audit(){
           "Prefer":"return=minimal"
         },
         body:JSON.stringify({
-          email:form.email,
-          source:"audit_landing",
-          status:"audit_requested",
-          notas:`Company:${form.company} | Repo:${form.repo} | Notes:${form.notes} | Pago PayPal: PENDIENTE de confirmar manualmente`
+          nombre:form.company,
+          correo_electronico:form.email,
+          fuente:"audit_landing",
+          estado:"nuevo",
+          amount:497,
+          notas:`Repo:${form.repo} | Notes:${form.notes} | Pago PayPal: PENDIENTE de confirmar manualmente`
         })
       });
     }catch(_){}
