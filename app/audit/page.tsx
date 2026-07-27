@@ -63,7 +63,7 @@ const T = {
     payBtn: "Pagar R$ 97 e Iniciar Auditoría →",
     formFoot: "Pago seguro vía Mercado Pago · Garantía de devolución · Entrega en 48h",
     doneTitle: "Solicitud de Auditoría Recibida",
-    donePre: "Completá tu pago en Mercado Pago en la nueva pestaña. Una vez confirmado, comenzamos tu auditoría forense de 48 horas. Informe entregado a ",
+    donePre: "Guardamos tu solicitud. Si no fuiste redirigido automáticamente a Mercado Pago, escribinos a hola@venbratech.com para completar el pago. Informe entregado a ",
   },
   en: {
     slots: "AUDITS OPEN · 3 slots left",
@@ -116,7 +116,7 @@ const T = {
     payBtn: "Pay R$ 97 & Start Audit →",
     formFoot: "Secure payment via Mercado Pago · Money-back guarantee · 48h delivery",
     doneTitle: "Audit Request Received",
-    donePre: "Complete your Mercado Pago payment in the new tab. Once confirmed, we'll begin your 48-hour forensic audit. Report delivered to ",
+    donePre: "We saved your request. If you weren't automatically redirected to Mercado Pago, email hola@venbratech.com to complete payment. Report delivered to ",
   },
   pt: {
     slots: "AUDITORIAS ABERTAS · Restam 3 vagas",
@@ -169,7 +169,7 @@ const T = {
     payBtn: "Pagar R$ 97 e Iniciar Auditoria →",
     formFoot: "Pagamento seguro via Mercado Pago · Garantia de reembolso · Entrega em 48h",
     doneTitle: "Solicitação de Auditoria Recebida",
-    donePre: "Complete seu pagamento no Mercado Pago na nova aba. Após a confirmação, iniciamos sua auditoria forense de 48 horas. Relatório entregue para ",
+    donePre: "Salvamos sua solicitação. Se você não foi redirecionado automaticamente ao Mercado Pago, escreva para hola@venbratech.com para concluir o pagamento. Relatório entregue para ",
   },
 } as const;
 
@@ -207,7 +207,9 @@ export default function Audit(){
       });
 
       if(leadId){
-        // Crear la preferencia real de cobro en Mercado Pago y redirigir al checkout
+        // Crear la preferencia real de cobro en Mercado Pago y redirigir al checkout.
+        // Redirige la MISMA pestaña (no window.open) porque los navegadores bloquean
+        // popups abiertos después de un await - con la misma pestaña siempre llega.
         const prefRes = await fetch("/api/mercadopago/create-preference",{
           method:"POST",
           headers:{"Content-Type":"application/json"},
@@ -215,7 +217,8 @@ export default function Audit(){
         });
         const prefData = await prefRes.json().catch(()=>null);
         if(prefData?.init_point){
-          window.open(prefData.init_point,"_blank");
+          window.location.href = prefData.init_point;
+          return;
         }
       }
     }catch(_){}
