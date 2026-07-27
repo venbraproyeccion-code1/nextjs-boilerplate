@@ -268,7 +268,7 @@ export default function Audit(){
           {t.lead}<strong style={{color:C.white}}>{t.leadStrong}</strong>
         </p>
         <div style={{marginBottom:20,fontFamily:"'DM Sans',sans-serif"}}>
-          <span style={{fontSize:14,color:C.gray,textDecoration:"line-through",marginRight:8}}>{t.priceWas}</span>
+          <span style={{fontSize:14,color:C.gray,textDecoration:"line-through",marginRight:8}}>{t.priceWas} </span>
           <span style={{fontSize:20,color:C.gold,fontWeight:700}}>{t.priceNow}</span>
           <div style={{fontSize:11,color:C.red,letterSpacing:1,textTransform:"uppercase",marginTop:4}}>{t.priceTag}</div>
         </div>
@@ -368,7 +368,7 @@ export default function Audit(){
                   style={{width:"100%",padding:"14px 16px",background:"rgba(255,255,255,0.04)",border:`1px solid ${C.border}`,color:C.white,fontFamily:"'DM Sans',sans-serif",fontSize:14,resize:"none"}}/>
               </div>
               <div style={{textAlign:"center",fontFamily:"'DM Sans',sans-serif"}}>
-                <span style={{fontSize:13,color:C.gray,textDecoration:"line-through",marginRight:6}}>{t.priceWas}</span>
+                <span style={{fontSize:13,color:C.gray,textDecoration:"line-through",marginRight:6}}>{t.priceWas} </span>
                 <span style={{fontSize:16,color:C.gold,fontWeight:700}}>{t.priceNow}</span>
                 <span style={{fontSize:11,color:C.red,marginLeft:8,textTransform:"uppercase"}}>{t.priceTag}</span>
               </div>
