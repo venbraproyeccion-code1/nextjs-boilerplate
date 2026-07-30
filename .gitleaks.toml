@@ -1,0 +1,14 @@
+title = "VenBraX gitleaks config"
+
+[extend]
+useDefault = true
+
+# Las claves anon/public de Supabase están diseñadas para ir en el cliente
+# (regla #2 del vault VenBraX: única excepción a "credenciales nunca en texto
+# plano"). Gitleaks no distingue una anon key de un secreto real - se
+# permiten explícitamente acá en vez de dejar el CI en rojo por un falso
+# positivo. Si la key rota, esta línea debe actualizarse con el valor nuevo.
+[allowlist]
+regexes = [
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaGFubnh5anpyaGduc3FtaHVuIiwicm9sZSI6ImFub24i[A-Za-z0-9_\-\.]+''',
+]
