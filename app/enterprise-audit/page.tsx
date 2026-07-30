@@ -12,7 +12,7 @@ type Tier = "enterprise_audit" | "enterprise_full";
 const TIERS: Record<Tier, { name:string; price:string; sub:string; features:string[]; cta:string }> = {
   enterprise_audit: {
     name:"Audit",
-    price:"US$ 2,000",
+    price:"R$ 10.000",
     sub:"Reporte forense completo · entrega async en 72h",
     features:[
       "Auditoría completa de tu pipeline/ecosistema de IA",
@@ -20,11 +20,11 @@ const TIERS: Record<Tier, { name:string; price:string; sub:string; features:stri
       "Sin llamadas en vivo — todo por escrito, a tu ritmo",
       "Entrega en 72 horas hábiles",
     ],
-    cta:"Solicitar Audit — US$ 2,000",
+    cta:"Solicitar Audit — R$ 10.000",
   },
   enterprise_full: {
     name:"Enterprise",
-    price:"US$ 5,000",
+    price:"R$ 25.000",
     sub:"Audit + plan de acción ampliado + 30 días de acompañamiento",
     features:[
       "Todo lo del tier Audit",
@@ -32,7 +32,7 @@ const TIERS: Record<Tier, { name:string; price:string; sub:string; features:stri
       "30 días de acompañamiento asíncrono vía Telegram",
       "Prioridad de respuesta sobre hallazgos nuevos",
     ],
-    cta:"Solicitar Enterprise — US$ 5,000",
+    cta:"Solicitar Enterprise — R$ 25.000",
   },
 };
 
@@ -62,7 +62,7 @@ export default function EnterpriseAudit(){
           correo_electronico:form.email,
           fuente:"enterprise_audit_landing",
           estado:"nuevo",
-          amount: tier==="enterprise_audit" ? 2000 : 5000,
+          amount: tier==="enterprise_audit" ? 10000 : 25000,
           notas:`Tier:${TIERS[tier].name} | Contexto:${form.context}`
         })
       });

@@ -7,16 +7,18 @@ export const runtime = "nodejs";
 // se muestra en app/audit/page.tsx - si se cambia el precio, actualizar ambos lados.
 const AUDIT_PRICE_BRL = 97;
 
-// Enterprise Audit - precios aprobados por Alfonso 2026-07-28, confirmado 2026-07-30
-// que el cobro debe ser en USD real (no conversión a BRL). Requiere que la cuenta de
-// Mercado Pago tenga habilitado Checkout Multi-Moneda - SIN CONFIRMAR todavía si esta
-// cuenta lo tiene activo (ver [[05 Checklist y Pendientes]] en el vault). Si Mercado
-// Pago rechaza currency_id "USD", este endpoint devuelve el error real de la API, no
-// un fallback silencioso a BRL - regla #22, nunca asumir que algo no probado funciona.
+// Enterprise Audit - precios aprobados por Alfonso 2026-07-28 en USD (US$2,000/US$5,000).
+// Probado real 2026-07-30 contra la API de Mercado Pago: currency_id "USD" es rechazado
+// ("invalid_items") - el Checkout Pro estándar de esta cuenta brasileña solo cobra BRL.
+// Alfonso pidió fijar el precio en reales usando referencias reales de mercado (no
+// adivinadas): cotización USD/BRL de julio 2026 (~R$5,10) + rango real de mercado
+// brasileño para auditorías/proyectos de IA-automatización (R$3.000-10.000 diagnóstico,
+// R$15.000-120.000 proyectos, fuentes: clicksoft.com.br/blog, waxi.com.br/blog). R$10.000
+// y R$25.000 caen justo en la conversión real y dentro del rango de mercado observado.
 const PRODUCTS = {
   audit: { title: "VenBraX AI Security Audit", price: AUDIT_PRICE_BRL, currency: "BRL" },
-  enterprise_audit: { title: "VenBraX Enterprise Audit", price: 2000, currency: "USD" },
-  enterprise_full: { title: "VenBraX Enterprise + Acompañamiento 30 días", price: 5000, currency: "USD" },
+  enterprise_audit: { title: "VenBraX Enterprise Audit", price: 10000, currency: "BRL" },
+  enterprise_full: { title: "VenBraX Enterprise + Acompañamiento 30 días", price: 25000, currency: "BRL" },
 } as const;
 type ProductKey = keyof typeof PRODUCTS;
 
