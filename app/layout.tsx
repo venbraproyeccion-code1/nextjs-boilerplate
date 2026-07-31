@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "VenBraTech — Ecosistema Digital Latino",
   description: "Automatización con IA, ciberseguridad, educación financiera y diagnóstico industrial — todo en un solo ecosistema, en español.",
   other: {
-    "impact-site-verification": "bb49220d-12f2-491d-b191-c4d9b6649cec",
+    "impact-site-verification": "185ca6ea-9d54-4a01-a0c4-8d61cbb3d0b7",
   },
 };
 
