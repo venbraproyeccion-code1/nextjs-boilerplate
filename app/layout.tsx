@@ -15,9 +15,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "VenBraTech — Ecosistema Digital Latino",
   description: "Automatización con IA, ciberseguridad, educación financiera y diagnóstico industrial — todo en un solo ecosistema, en español.",
-  other: {
-    "impact-site-verification": "185ca6ea-9d54-4a01-a0c4-8d61cbb3d0b7",
-  },
 };
 
 export default function RootLayout({
@@ -30,6 +27,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <meta
+          name="impact-site-verification"
+          // eslint-disable-next-line react/no-unknown-property
+          value="185ca6ea-9d54-4a01-a0c4-8d61cbb3d0b7"
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
