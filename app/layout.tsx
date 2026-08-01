@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import CookieConsent from "./components/CookieConsent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,10 @@ export default function RootLayout({
           {...({ value: "185ca6ea-9d54-4a01-a0c4-8d61cbb3d0b7" } as unknown as React.MetaHTMLAttributes<HTMLMetaElement>)}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <CookieConsent />
+      </body>
     </html>
   );
 }

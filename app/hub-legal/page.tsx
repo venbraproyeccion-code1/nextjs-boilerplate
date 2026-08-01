@@ -61,6 +61,25 @@ export default function HubLegal() {
           ))}
         </div>
       </section>
+
+      <section style={{ maxWidth: 860, margin: "0 auto", padding: "0 1.5rem 6rem" }}>
+        <div style={{
+          background: "rgba(197,164,85,0.05)", border: `1px solid ${C.border}`, borderRadius: 12, padding: "28px 32px",
+        }}>
+          <p className="hl-sans" style={{ fontSize: 13, color: C.gray, lineHeight: 1.8, margin: 0 }}>
+            <span style={{ color: C.gold, fontWeight: 600 }}>Aviso Legal: </span>
+            Hub Legal es una herramienta de asistencia impulsada por IA que ofrece un diagnóstico preliminar de riesgo
+            (&quot;aprobado&quot;, &quot;en revisión&quot; o &quot;alerta&quot;) sobre documentos legales. No constituye
+            asesoría legal profesional ni sustituye la revisión de un abogado colegiado. VenBra Tech no garantiza la
+            exactitud, integridad o vigencia del análisis generado y no será responsable por decisiones tomadas
+            exclusivamente con base en dicho análisis. Cada despacho es responsable de verificar cualquier resultado
+            con un profesional cualificado antes de actuar sobre él. Ver también nuestros{" "}
+            <Link href="/terminos" style={{ color: C.gold, textDecoration: "underline" }}>Términos de Servicio</Link>
+            {" "}y{" "}
+            <Link href="/privacidad" style={{ color: C.gold, textDecoration: "underline" }}>Política de Privacidad</Link>.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
