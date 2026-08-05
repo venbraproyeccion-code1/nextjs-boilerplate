@@ -29,7 +29,7 @@ Documento:
 ${documentText.slice(0, 15000)}`;
 
   const geminiResp = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
     {
       method: "POST",
       headers: { "x-goog-api-key": geminiKey, "Content-Type": "application/json" },
