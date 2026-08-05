@@ -69,10 +69,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  const webhookHeaders: Record<string, string> = { "Content-Type": "application/json" };
+  if (process.env.N8N_WEBHOOK_SECRET) {
+    webhookHeaders["X-VenBraX-Webhook-Secret"] = process.env.N8N_WEBHOOK_SECRET;
+  }
+
   try {
     await fetch(n8nWebhookUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: webhookHeaders,
       body: JSON.stringify({
         lead_id: leadId,
         payment_id: paymentId,
