@@ -24,3 +24,64 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ------------------------------------------------------------------
+   Identidad VenBraTech — la misma del portafolio de la division
+   (venbratech-portafolio.pages.dev), para que ambas propiedades se lean
+   como una sola empresa.
+
+   Se ANADE al tema existente en lugar de sustituirlo: /industrial,
+   /hub-legal, /audit y /enterprise-audit siguen usando los tokens y el
+   body de arriba sin cambios. El fondo oscuro se aplica solo en el
+   contenedor de la portada, no en el body.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-fondo: #0a0b0d;
+  --color-panel: #121417;
+  --color-linea: rgba(255, 255, 255, 0.08);
+  --color-linea2: rgba(255, 255, 255, 0.16);
+  --color-texto: #eceef1;
+  --color-tenue: #9ba1a9;
+  --color-acento: #00e0a4;
+  --color-acento2: #29efbb;
+
+  --font-display: var(--font-space), system-ui, sans-serif;
+  --font-cuerpo: var(--font-inter), system-ui, sans-serif;
+  --font-plex: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Aparicion al hacer scroll.
+   El estado de reposo es VISIBLE: la clase .js solo la anade un script del
+   head, asi que si el JavaScript no corre el contenido se ve igual. La
+   animacion es adorno, nunca requisito. */
+.rev {
+  opacity: 1;
+}
+html.js .rev {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.js .rev.dentro {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html.js .rev {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
