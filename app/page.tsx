@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   ARQUITECTURA,
   CAPACIDADES,
@@ -124,36 +124,6 @@ const NAV = [
 /* -------------------------------------------------------------------- vista */
 
 export default function Home() {
-  const [correo, setCorreo] = useState("");
-  const [enviando, setEnviando] = useState(false);
-  const [listo, setListo] = useState(false);
-
-  const enviar = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!correo || listo) return;
-    setEnviando(true);
-    try {
-      // Endpoint heredado de la etapa anterior. Se conserva para no perder la
-      // unica via de captura que ya existe; el utm distingue los contactos
-      // comerciales de tecnologia de los registros antiguos.
-      await fetch(
-        "https://xshannxyjzrhgnsqmhun.supabase.co/functions/v1/register-member",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: correo,
-            utm_source: "venbratech_home_tecnologia",
-          }),
-        }
-      );
-    } catch {
-      /* el usuario ya tiene WhatsApp y correo como alternativa */
-    }
-    setEnviando(false);
-    setListo(true);
-    setCorreo("");
-  };
 
   return (
     <div className="flex min-h-screen flex-col bg-fondo font-cuerpo text-texto">
@@ -476,69 +446,43 @@ export default function Home() {
           id="contacto"
           etiqueta="Empecemos"
           titulo="Cuéntanos qué necesitas construir."
-          intro="Describe tu proceso o tu idea y te decimos qué haría falta para llevarlo a un sistema que funcione."
+          intro="Describe tu proceso o tu idea y te decimos qué haría falta para llevarlo a un sistema que funcione. Sin compromiso."
           fondo
         >
-          <div className="grid gap-8 lg:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <Rev>
-              <div className="rounded-xl border border-linea bg-fondo p-7">
-                {!listo ? (
-                  <form onSubmit={enviar}>
-                    <label htmlFor="correo" className="block text-[0.9rem] text-tenue">
-                      Déjanos tu correo y te contactamos.
-                    </label>
-                    <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-                      <input
-                        id="correo"
-                        type="email"
-                        required
-                        value={correo}
-                        onChange={(e) => setCorreo(e.target.value)}
-                        placeholder="tu@empresa.com"
-                        className="flex-1 rounded-lg border border-linea2 bg-panel px-4 py-3 outline-none focus:border-acento"
-                      />
-                      <button
-                        type="submit"
-                        disabled={enviando}
-                        className="rounded-lg bg-acento px-6 py-3 font-semibold text-[#04140f] transition hover:bg-acento2 disabled:opacity-60"
-                      >
-                        {enviando ? "Enviando…" : "Solicitar proyecto"}
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <p className="text-acento">
-                    ✓ Recibido. Te escribimos al correo que dejaste.
-                  </p>
-                )}
-                <p className="mt-4 text-[0.82rem] text-tenue">
-                  ¿Prefieres hablar directo? Escríbenos por WhatsApp o correo.
-                </p>
-              </div>
+              <a
+                href={CONTACTO.whatsappUrl}
+                target="_blank"
+                rel="noopener"
+                className="flex h-full flex-col rounded-xl border border-linea2 bg-fondo p-7 transition hover:border-acento"
+              >
+                <span className="font-plex text-[0.72rem] uppercase tracking-[0.12em] text-acento">
+                  WhatsApp
+                </span>
+                <span className="mt-2 font-display text-[1.3rem] font-semibold">
+                  {CONTACTO.whatsapp}
+                </span>
+                <span className="mt-2 text-[0.9rem] text-tenue">
+                  La vía más rápida. Escríbenos y conversamos hoy mismo.
+                </span>
+              </a>
             </Rev>
             <Rev delay={0.06}>
-              <div className="flex h-full flex-col justify-center gap-4">
-                <a
-                  href={CONTACTO.whatsappUrl}
-                  target="_blank"
-                  rel="noopener"
-                  className="rounded-lg border border-linea2 px-6 py-4 transition hover:border-acento"
-                >
-                  <span className="block font-plex text-[0.72rem] uppercase tracking-[0.12em] text-acento">
-                    WhatsApp
-                  </span>
-                  <span className="mt-1 block">{CONTACTO.whatsapp}</span>
-                </a>
-                <a
-                  href={`mailto:${CONTACTO.correo}?subject=Proyecto%20con%20VenBraTech`}
-                  className="rounded-lg border border-linea2 px-6 py-4 transition hover:border-acento"
-                >
-                  <span className="block font-plex text-[0.72rem] uppercase tracking-[0.12em] text-acento">
-                    Correo
-                  </span>
-                  <span className="mt-1 block">{CONTACTO.correo}</span>
-                </a>
-              </div>
+              <a
+                href={`mailto:${CONTACTO.correo}?subject=Proyecto%20con%20VenBraTech`}
+                className="flex h-full flex-col rounded-xl border border-linea2 bg-fondo p-7 transition hover:border-acento"
+              >
+                <span className="font-plex text-[0.72rem] uppercase tracking-[0.12em] text-acento">
+                  Correo
+                </span>
+                <span className="mt-2 font-display text-[1.3rem] font-semibold">
+                  {CONTACTO.correo}
+                </span>
+                <span className="mt-2 text-[0.9rem] text-tenue">
+                  Si prefieres escribir con detalle o adjuntar documentos.
+                </span>
+              </a>
             </Rev>
           </div>
         </Seccion>
