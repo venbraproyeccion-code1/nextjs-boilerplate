@@ -179,6 +179,17 @@ export const PROYECTOS: Proyecto[] = [
       "Identidad propia con logo animado, separación clara de áreas y visado digital integrado en su plantilla de documentos.",
     enlace: "https://juan-rodriguez-abogado.pages.dev",
   },
+  {
+    nombre: "Clara Rivero Micropigmentación",
+    descripcion:
+      "Sitio de una especialista en micropigmentación con 32 años de trayectoria, en Valencia, estado Carabobo.",
+    tecnologia: "HTML, CSS y JavaScript · Cloudflare Pages",
+    problema:
+      "Su trabajo solo se veía en Instagram: no había un sitio propio que contara su trayectoria ni mostrara los resultados reales de forma ordenada.",
+    resultado:
+      "Historia de marca con línea de tiempo de 7 hitos, catálogo de servicios y galería de trabajos reales, con cita directa por WhatsApp.",
+    enlace: "https://clara-rivero.pages.dev",
+  },
 ];
 
 /** Seccion 7 — Red de colaboradores. */
