@@ -14,7 +14,9 @@ interface ClientRow {
   onboarding: { token: string; expires_at: string } | null;
 }
 
-const ALL_PLATFORMS = ["facebook", "instagram", "tiktok", "threads", "pinterest", "shopify", "hotmart"];
+// Solo lo que de verdad se ofrece a clientes (ver app/connect/[token]/page.tsx).
+// Pinterest sigue siendo canal propio de VenBraX, fuera de este panel.
+const ALL_PLATFORMS = ["facebook", "instagram", "threads", "tiktok", "youtube"];
 
 export default function AdminConnectPage() {
   const [clients, setClients] = useState<ClientRow[]>([]);

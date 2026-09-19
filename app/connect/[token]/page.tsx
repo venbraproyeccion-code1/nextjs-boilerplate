@@ -4,8 +4,12 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-const SOCIAL = ["facebook", "instagram", "tiktok", "threads", "pinterest"] as const;
-const COMMERCE = ["shopify", "hotmart"] as const;
+// Alfonso decidio (2026-09-19): Facebook/Instagram/Threads/TikTok/YouTube se
+// ofrecen a clientes. Pinterest queda como canal propio de VenBraX
+// (single-tenant, fuera de este sistema). Shopify y Hotmart quedan en el
+// registro de plataformas (lib/venbrax-connect/platforms.ts) por si se
+// retoman, pero no se muestran aqui hasta que haya app registrada.
+const SOCIAL = ["facebook", "instagram", "threads", "tiktok", "youtube"] as const;
 
 async function getClientByToken(token: string) {
   const sessions = await supabaseAdmin.select(
@@ -22,16 +26,14 @@ async function getClientByToken(token: string) {
 }
 
 async function getConnectionStatuses(clientId: string) {
+  // Solo social por ahora -- vc_commerce_connections (Shopify/Hotmart) no se
+  // usa en el onboarding de clientes mientras esas plataformas esten fuera.
   const social = await supabaseAdmin.select(
     "vc_social_connections",
     `client_id=eq.${clientId}&select=platform,status`
   );
-  const commerce = await supabaseAdmin.select(
-    "vc_commerce_connections",
-    `client_id=eq.${clientId}&select=platform,status`
-  );
   const map: Record<string, string> = {};
-  for (const row of [...(social ?? []), ...(commerce ?? [])]) {
+  for (const row of social ?? []) {
     map[row.platform] = row.status;
   }
   return map;
@@ -87,11 +89,6 @@ export default async function ConnectPage({ params }: { params: Promise<{ token:
 
       <h2 style={{ fontSize: 15, textTransform: "uppercase", letterSpacing: 1, color: "#888" }}>Redes sociales</h2>
       {SOCIAL.map((p) => (
-        <ConnectButton key={p} token={token} platform={p} status={statuses[p]} />
-      ))}
-
-      <h2 style={{ fontSize: 15, textTransform: "uppercase", letterSpacing: 1, color: "#888", marginTop: 24 }}>Comercio</h2>
-      {COMMERCE.map((p) => (
         <ConnectButton key={p} token={token} platform={p} status={statuses[p]} />
       ))}
     </main>

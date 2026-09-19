@@ -198,6 +198,46 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
     },
   },
 
+  youtube: {
+    kind: "social",
+    label: "YouTube",
+    envClientId: "GOOGLE_YOUTUBE_CLIENT_ID",
+    envClientSecret: "GOOGLE_YOUTUBE_CLIENT_SECRET",
+    // OAuth2 estandar de Google (Google Cloud Console -> OAuth client ID,
+    // tipo "Web application"). access_type=offline + prompt=consent para
+    // recibir refresh_token tambien en reconexiones, no solo la primera vez.
+    buildAuthorizeUrl: ({ clientId, redirectUri, state }) => {
+      const u = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+      u.searchParams.set("client_id", clientId);
+      u.searchParams.set("redirect_uri", redirectUri);
+      u.searchParams.set("response_type", "code");
+      u.searchParams.set("access_type", "offline");
+      u.searchParams.set("prompt", "consent");
+      u.searchParams.set(
+        "scope",
+        "https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly"
+      );
+      u.searchParams.set("state", state);
+      return u.toString();
+    },
+    exchangeToken: async ({ code, clientId, clientSecret, redirectUri }) => {
+      const res = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+          grant_type: "authorization_code",
+          redirect_uri: redirectUri,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(`YouTube token exchange failed: ${JSON.stringify(data)}`);
+      return { access_token: data.access_token, refresh_token: data.refresh_token, expires_in: data.expires_in, scope: data.scope };
+    },
+  },
+
   shopify: {
     kind: "commerce",
     label: "Shopify",
