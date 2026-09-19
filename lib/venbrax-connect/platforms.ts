@@ -139,8 +139,8 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
   threads: {
     kind: "social",
     label: "Threads",
-    envClientId: "THREADS_APP_ID",
-    envClientSecret: "THREADS_APP_SECRET",
+    envClientId: "THREADS_CLIENT_ID",
+    envClientSecret: "THREADS_CLIENT_SECRET",
     buildAuthorizeUrl: ({ clientId, redirectUri, state }) => {
       const u = new URL("https://threads.net/oauth/authorize");
       u.searchParams.set("client_id", clientId);
