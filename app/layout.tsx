@@ -107,7 +107,7 @@ export default function RootLayout({
         {/* Verificacion de dominio en Meta Business (VENBRAX CONNECT). No tocar. */}
         <meta
           name="facebook-domain-verification"
-          content="slk9qzi5anvtlhnhyOmsaOauvzjsqn"
+          content="slk9qzi5anvtlhnhy0msa0auvzjsqn"
         />
         {/* Marca la presencia de JavaScript antes del primer pintado: si no
             corre, .js nunca se anade y el CSS deja el contenido visible. */}
