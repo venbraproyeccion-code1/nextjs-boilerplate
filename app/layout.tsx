@@ -104,6 +104,11 @@ export default function RootLayout({
           // eslint-disable-next-line react/no-unknown-property
           {...({ value: "185ca6ea-9d54-4a01-a0c4-8d61cbb3d0b7" } as unknown as React.MetaHTMLAttributes<HTMLMetaElement>)}
         />
+        {/* Verificacion de dominio en Meta Business (VENBRAX CONNECT). No tocar. */}
+        <meta
+          name="facebook-domain-verification"
+          content="slk9qzi5anvtlhnhyOmsaOauvzjsqn"
+        />
         {/* Marca la presencia de JavaScript antes del primer pintado: si no
             corre, .js nunca se anade y el CSS deja el contenido visible. */}
         <script
