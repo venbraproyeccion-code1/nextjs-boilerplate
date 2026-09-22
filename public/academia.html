@@ -278,7 +278,7 @@
 <section class="hero">
   <div class="badge">⚡ Acceso Exclusivo · Comunidad Verificada</div>
   <h1>El material gratuito<br>no es para <span>todos</span>.</h1>
-  <p>Es para quienes están comprometidos. Completa los 3 pasos y desbloquea el ecosistema completo: guías, señales, herramientas y comunidad.</p>
+  <p>Es para quienes están comprometidos. Completa los 3 pasos y desbloquea el ecosistema completo: guías, herramientas y comunidad de tecnología e IA.</p>
 </section>
 
 <!-- PASOS GATING -->
@@ -314,7 +314,7 @@
       <div class="step-num">Paso 3</div>
       <div class="step-icon">✈️</div>
       <h3>Únete al canal Telegram</h3>
-      <p>El canal privado donde se publican señales, alertas y material exclusivo primero.</p>
+      <p>El canal privado donde se publican recursos, novedades y material exclusivo primero.</p>
       <a class="step-btn step-btn-gold" href="https://t.me/venbratech" target="_blank" onclick="markStep3()">Unirme al canal →</a>
       <div class="step-check">✅ En Telegram</div>
     </div>
@@ -343,11 +343,11 @@
     <label>¿Qué te interesa más?</label>
     <select id="f-interes">
       <option value="">Selecciona...</option>
-      <option value="inversiones">📈 Inversiones y finanzas</option>
+      <option value="software">💻 Software y plataformas</option>
       <option value="ia_automatizacion">🤖 IA y automatización</option>
-      <option value="trading">📊 Trading</option>
-      <option value="emprendimiento">🚀 Emprendimiento digital</option>
-      <option value="contenido">🎥 Creación de contenido</option>
+      <option value="datos">🗄️ Datos e infraestructura</option>
+      <option value="desarrollo_interactivo">🎮 Desarrollo interactivo</option>
+      <option value="audiovisual">🎥 Tecnología audiovisual</option>
       <option value="todo">✨ Todo lo anterior</option>
     </select>
   </div>
@@ -365,13 +365,13 @@
 <div class="material-grid" id="material-grid">
   <div class="material-card" id="mat-1">
     <div class="lock-icon">🔒</div>
-    <h4>Guía: Inversión desde $0</h4>
-    <p>PDF · 47 páginas · Actualizado 2026</p>
+    <h4>Software y sistemas</h4>
+    <p>Recursos sobre desarrollo de plataformas y sistemas a la medida</p>
   </div>
   <div class="material-card" id="mat-2">
     <div class="lock-icon">🔒</div>
-    <h4>Señales Semanales</h4>
-    <p>Análisis técnico + fundamentales cada lunes</p>
+    <h4>Inteligencia artificial</h4>
+    <p>Integración de IA, agentes y procesamiento inteligente de información</p>
   </div>
   <div class="material-card" id="mat-3">
     <div class="lock-icon">🔒</div>
@@ -380,14 +380,14 @@
   </div>
   <div class="material-card" id="mat-4">
     <div class="lock-icon">🔒</div>
-    <h4>VenBra AI Content Machine</h4>
-    <p>Precio fundador $97 · Acceso vitalicio</p>
+    <h4>Datos e infraestructura</h4>
+    <p>Bases de datos, arquitectura e integraciones</p>
   </div>
 </div>
 
 <footer>
-  <p>© 2026 VenBraTech · <a href="https://venbratech.com" target="_blank">venbratech.com</a> · Comunidad de Latinos en el ecosistema digital</p>
-  <p style="margin-top:0.5rem;">Material educativo · No es asesoría financiera ni de inversión</p>
+  <p>© 2026 VenBraTech · <a href="https://venbratech.com" target="_blank">venbratech.com</a> · Comunidad de tecnología e IA en Latinoamérica</p>
+  <p style="margin-top:0.5rem;">Formación en inteligencia artificial, automatización, tecnología, herramientas digitales y desarrollo</p>
 </footer>
 
 <script>
@@ -568,10 +568,10 @@ function renderState() {
     });
     // Añadir links de descarga (placeholders)
     const links = [
-      '#guia-inversion',
-      '#senales',
+      '#software',
+      '#ia',
       '#kit-ia',
-      'https://hotmart.com/venbratech',
+      '#datos',
     ];
     document.querySelectorAll('.material-card').forEach((c, i) => {
       if (!c.querySelector('a')) {
