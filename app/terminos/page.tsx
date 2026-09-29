@@ -12,7 +12,8 @@ export default function Terminos() {
     {t:"9. Elegibilidad y Restricciones Geográficas",c:"Los servicios de inversión y activos digitales referidos por VenBra Tech (eToro, Arrived Homes, Fundrise, Nexo) pueden estar restringidos o prohibidos en su país de residencia. Es responsabilidad exclusiva del usuario verificar que el uso de estas plataformas es legal en su jurisdicción antes de registrarse. VenBra Tech no solicita activamente usuarios en jurisdicciones donde estos servicios estén prohibidos y se reserva el derecho de restringir el acceso a residentes de dichas jurisdicciones."},
     {t:"10. Resolución de Disputas y Arbitraje",c:"Cualquier disputa derivada del uso de esta plataforma será resuelta, en la mayor medida permitida por la ley aplicable, mediante arbitraje vinculante e individual, renunciando ambas partes a participar en demandas colectivas o de clase. Esta cláusula no limita los derechos de protección al consumidor que sean irrenunciables conforme a la ley de su jurisdicción."},
     {t:"11. Ley Aplicable",c:"Estos términos se rigen por las leyes de la República Federativa de Brasil. Cualquier disputa no sujeta a arbitraje estará sujeta a la jurisdicción de los tribunales de Santa Catarina, Brasil."},
-    {t:"12. Contacto",c:"Para consultas sobre estos Términos de Servicio: alfonso@venbratech.com | venbratech.com"}
+    {t:"12. Contacto",c:"Para consultas sobre estos Términos de Servicio: alfonso@venbratech.com | venbratech.com"},
+    {t:"13. Titularidad",c:"VenBra Tech es el nombre comercial bajo el cual opera Alfonso Enrique Grammatica Rivero, persona física con domicilio en Brasil."}
   ];
   return (
     <div style={{background:C.black,minHeight:"100vh"}}>
