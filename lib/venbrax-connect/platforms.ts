@@ -29,6 +29,21 @@ export interface PlatformConfig {
     external_account_id?: string;
     display_name?: string;
   }>;
+  /** Cambia un refresh_token vencido/por vencer por un access_token nuevo. */
+  refreshAccessToken?: (params: {
+    refreshToken: string;
+    clientId: string;
+    clientSecret: string;
+  }) => Promise<{ access_token: string; refresh_token?: string; expires_in?: number }>;
+  /** Publica el contenido programado. Solo implementado donde ya hay fase real de publicacion (TikTok/YouTube). */
+  publish?: (params: {
+    accessToken: string;
+    externalAccountId: string | null;
+    /** URL firmada y temporal del archivo en Supabase Storage. */
+    mediaUrl: string;
+    title?: string | null;
+    caption?: string | null;
+  }) => Promise<{ externalPostId: string }>;
 }
 
 // NOTA: cada `buildAuthorizeUrl`/`exchangeToken` de abajo sigue el flujo OAuth2
@@ -51,6 +66,8 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       u.searchParams.set("response_type", "code");
       u.searchParams.set("redirect_uri", redirectUri);
       u.searchParams.set("state", state);
+      // Fuerza la pantalla de consentimiento: sin esto TikTok reautoriza en silencio la cuenta que ya dio permiso y varias cuentas terminan enlazadas a la misma.
+      u.searchParams.set("disable_auto_auth", "1");
       return u.toString();
     },
     exchangeToken: async ({ code, clientId, clientSecret, redirectUri }) => {
@@ -74,6 +91,47 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
         scope: data.scope,
         external_account_id: data.open_id,
       };
+    },
+    refreshAccessToken: async ({ refreshToken, clientId, clientSecret }) => {
+      const res = await fetch("https://open.tiktokapis.com/v2/oauth/token/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "Cache-Control": "no-cache" },
+        body: new URLSearchParams({
+          client_key: clientId,
+          client_secret: clientSecret,
+          grant_type: "refresh_token",
+          refresh_token: refreshToken,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(`TikTok refresh fallo: ${JSON.stringify(data)}`);
+      return { access_token: data.access_token, refresh_token: data.refresh_token, expires_in: data.expires_in };
+    },
+    publish: async ({ accessToken, mediaUrl, caption }) => {
+      // PULL_FROM_URL exige que el dominio de mediaUrl este verificado en el
+      // TikTok Developer Portal (archivo de verificacion de dominio) -- sin
+      // eso, TikTok rechaza la llamada con url_ownership_unverified.
+      // privacy_level se deja en SELF_ONLY a proposito: una app sin auditar
+      // de TikTok (Content Posting API) NO PUEDE publicar PUBLIC_TO_EVERYONE
+      // -- lo fuerza el lado de TikTok, no es timidez nuestra. Subir a
+      // publico real requiere pasar la revision de la app en TikTok.
+      const res = await fetch("https://open.tiktokapis.com/v2/post/publish/video/init/", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          post_info: {
+            title: caption ?? "",
+            privacy_level: "SELF_ONLY",
+            disable_duet: false,
+            disable_comment: false,
+            disable_stitch: false,
+          },
+          source_info: { source: "PULL_FROM_URL", video_url: mediaUrl },
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error?.code !== "ok") throw new Error(`TikTok publish fallo: ${JSON.stringify(data)}`);
+      return { externalPostId: data.data.publish_id };
     },
   },
 
@@ -235,6 +293,66 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(`YouTube token exchange failed: ${JSON.stringify(data)}`);
       return { access_token: data.access_token, refresh_token: data.refresh_token, expires_in: data.expires_in, scope: data.scope };
+    },
+    refreshAccessToken: async ({ refreshToken, clientId, clientSecret }) => {
+      const res = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          refresh_token: refreshToken,
+          grant_type: "refresh_token",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(`YouTube refresh fallo: ${JSON.stringify(data)}`);
+      // Google no reenvia refresh_token en cada refresh -- el original sigue
+      // siendo valido, quien llama debe conservarlo (ver publishing.ts).
+      return { access_token: data.access_token, expires_in: data.expires_in };
+    },
+    publish: async ({ accessToken, mediaUrl, title, caption }) => {
+      // YouTube Data API no tiene "publicar desde URL": hay que bajar el
+      // archivo real y resubirlo via upload resumable. Se transmite en
+      // streaming (request body = el mismo stream de la descarga) para no
+      // cargar el video entero en memoria dentro de la funcion serverless.
+      const videoRes = await fetch(mediaUrl);
+      if (!videoRes.ok || !videoRes.body) throw new Error(`No se pudo descargar el video fuente: ${videoRes.status}`);
+      const contentType = videoRes.headers.get("content-type") ?? "video/mp4";
+
+      const initRes = await fetch(
+        "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json; charset=UTF-8",
+            "X-Upload-Content-Type": contentType,
+          },
+          body: JSON.stringify({
+            snippet: { title: title || "Sin titulo", description: caption ?? "" },
+            // privacyStatus "private" a proposito, mismo criterio que TikTok:
+            // publicacion real la decide Alfonso a mano hasta que el flujo se
+            // valide end-to-end -- cambiar a "public" es una linea, pero es
+            // una decision de negocio, no algo para dejar en automatico.
+            status: { privacyStatus: "private" },
+          }),
+        }
+      );
+      if (!initRes.ok) throw new Error(`YouTube init de subida fallo: ${initRes.status} ${await initRes.text()}`);
+      const uploadUrl = initRes.headers.get("location");
+      if (!uploadUrl) throw new Error("YouTube no devolvio URL de subida resumable");
+
+      const uploadRes = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": contentType },
+        body: videoRes.body,
+        // @ts-expect-error -- "duplex" habilita streaming del body de request en fetch de Node 18+; el tipo RequestInit del DOM aun no lo declara.
+        duplex: "half",
+      });
+      const data = await uploadRes.json();
+      if (!uploadRes.ok || data.error) throw new Error(`YouTube subida fallo: ${JSON.stringify(data)}`);
+      return { externalPostId: data.id };
     },
   },
 
