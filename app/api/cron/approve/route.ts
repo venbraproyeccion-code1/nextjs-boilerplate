@@ -7,9 +7,9 @@ export const runtime = "nodejs";
 // sin horario de verano). Lo llama n8n cuando Alfonso pulsa el boton en Telegram.
 // Mismo secreto que /api/cron/publish.
 function isAuthorized(req: NextRequest): boolean {
-  const secret = process.env.CRON_SECRET;
+  const secret = process.env.CRON_SECRET?.trim();
   if (!secret) return false;
-  return req.headers.get("authorization") === `Bearer ${secret}`;
+  return (req.headers.get("authorization") ?? "").trim() === `Bearer ${secret}`;
 }
 
 export async function POST(req: NextRequest) {

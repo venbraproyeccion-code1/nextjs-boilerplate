@@ -12,12 +12,12 @@ export const maxDuration = 300;
 // llama -- Vercel Cron y un Schedule Trigger de n8n (que ya corre local
 // 24/7, ver vault de Arquitectura) sirven igual, mientras traigan el secreto.
 function isAuthorized(req: NextRequest): boolean {
-  const secret = process.env.CRON_SECRET;
+  const secret = process.env.CRON_SECRET?.trim();
   if (!secret) {
     console.error("CRON_SECRET no configurado -- endpoint de publicacion deshabilitado por seguridad");
     return false;
   }
-  return req.headers.get("authorization") === `Bearer ${secret}`;
+  return (req.headers.get("authorization") ?? "").trim() === `Bearer ${secret}`;
 }
 
 export async function GET(req: NextRequest) {
