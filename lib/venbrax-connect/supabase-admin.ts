@@ -44,4 +44,9 @@ export const supabaseAdmin = {
     }),
   update: (table: string, query: string, patch: Record<string, unknown>) =>
     request(`/${table}?${query}`, { method: "PATCH", body: JSON.stringify(patch) }),
+  // Igual que update, pero devuelve las filas modificadas -- lo usa el
+  // "claim" de jobs de publicacion para saber si de verdad gano la carrera
+  // (si otro ciclo ya tomo el job, el WHERE no matchea nada y vuelve []).
+  updateReturning: (table: string, query: string, patch: Record<string, unknown>) =>
+    request(`/${table}?${query}`, { method: "PATCH", body: JSON.stringify(patch), preferReturn: true }),
 };

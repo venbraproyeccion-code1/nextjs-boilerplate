@@ -74,7 +74,12 @@ export default function AdminConnectPage() {
 
   return (
     <main style={{ maxWidth: 780, margin: "40px auto", padding: "0 20px", fontFamily: "system-ui", color: "#f4f5f3", background: "#060b08", minHeight: "100vh" }}>
-      <h1 style={{ marginBottom: 4 }}>VenBraX Connect — Panel</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+        <h1>VenBraX Connect — Panel</h1>
+        <a href="/admin/posts" style={{ color: "#2FE6A8", fontSize: 14 }}>
+          Posts programados →
+        </a>
+      </div>
       <p style={{ color: "#888", marginBottom: 28 }}>Crea un cliente, copia su link, mándaselo por WhatsApp.</p>
 
       <form onSubmit={handleCreate} style={{ display: "flex", gap: 10, marginBottom: 32 }}>
