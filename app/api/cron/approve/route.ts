@@ -9,7 +9,8 @@ export const runtime = "nodejs";
 function isAuthorized(req: NextRequest): boolean {
   const secret = process.env.CRON_SECRET?.trim();
   if (!secret) return false;
-  return (req.headers.get("authorization") ?? "").trim() === `Bearer ${secret}`;
+  const header = (req.headers.get("authorization") ?? "").trim();
+  return header === `Bearer ${secret}` || header === secret;
 }
 
 export async function POST(req: NextRequest) {

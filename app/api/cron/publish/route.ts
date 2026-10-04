@@ -17,7 +17,8 @@ function isAuthorized(req: NextRequest): boolean {
     console.error("CRON_SECRET no configurado -- endpoint de publicacion deshabilitado por seguridad");
     return false;
   }
-  return (req.headers.get("authorization") ?? "").trim() === `Bearer ${secret}`;
+  const header = (req.headers.get("authorization") ?? "").trim();
+  return header === `Bearer ${secret}` || header === secret;
 }
 
 export async function GET(req: NextRequest) {
