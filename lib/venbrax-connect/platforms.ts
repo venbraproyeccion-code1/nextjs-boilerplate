@@ -107,30 +107,38 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       if (!res.ok || data.error) throw new Error(`TikTok refresh fallo: ${JSON.stringify(data)}`);
       return { access_token: data.access_token, refresh_token: data.refresh_token, expires_in: data.expires_in };
     },
-    publish: async ({ accessToken, mediaUrl, caption }) => {
-      // PULL_FROM_URL exige que el dominio de mediaUrl este verificado en el
-      // TikTok Developer Portal (archivo de verificacion de dominio) -- sin
-      // eso, TikTok rechaza la llamada con url_ownership_unverified.
-      // privacy_level se deja en SELF_ONLY a proposito: una app sin auditar
-      // de TikTok (Content Posting API) NO PUEDE publicar PUBLIC_TO_EVERYONE
-      // -- lo fuerza el lado de TikTok, no es timidez nuestra. Subir a
-      // publico real requiere pasar la revision de la app en TikTok.
-      const res = await fetch("https://open.tiktokapis.com/v2/post/publish/video/init/", {
+    publish: async ({ accessToken, mediaUrl }) => {
+      // Sube el video como BORRADOR a la bandeja de la app de TikTok (scope
+      // video.upload): el dueno elige el sonido y publica con un toque. Se usa
+      // FILE_UPLOAD (el servidor descarga el archivo y lo sube por trozos) porque
+      // PULL_FROM_URL exige verificar el dominio de Supabase en TikTok. En borrador
+      // no se puede fijar el caption por API; lo escribe el dueno en la app.
+      const file = await fetch(mediaUrl);
+      if (!file.ok) throw new Error(`No se pudo descargar el video: ${file.status}`);
+      const bytes = Buffer.from(await file.arrayBuffer());
+      const size = bytes.length;
+      const MAX_CHUNK = 64 * 1024 * 1024;
+      const chunk = Math.min(size, MAX_CHUNK);
+      const total = Math.ceil(size / chunk);
+
+      const init = await fetch("https://open.tiktokapis.com/v2/post/publish/inbox/video/init/", {
         method: "POST",
-        headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          post_info: {
-            title: caption ?? "",
-            privacy_level: "SELF_ONLY",
-            disable_duet: false,
-            disable_comment: false,
-            disable_stitch: false,
-          },
-          source_info: { source: "PULL_FROM_URL", video_url: mediaUrl },
-        }),
+        headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json; charset=UTF-8" },
+        body: JSON.stringify({ source_info: { source: "FILE_UPLOAD", video_size: size, chunk_size: chunk, total_chunk_count: total } }),
       });
-      const data = await res.json();
-      if (!res.ok || data.error?.code !== "ok") throw new Error(`TikTok publish fallo: ${JSON.stringify(data)}`);
+      const data = await init.json();
+      if (!init.ok || data.error?.code !== "ok") throw new Error(`TikTok init de borrador fallo: ${JSON.stringify(data)}`);
+
+      for (let i = 0; i < total; i++) {
+        const start = i * chunk;
+        const end = Math.min(start + chunk, size) - 1;
+        const put = await fetch(data.data.upload_url, {
+          method: "PUT",
+          headers: { "Content-Type": "video/mp4", "Content-Length": String(end - start + 1), "Content-Range": `bytes ${start}-${end}/${size}` },
+          body: bytes.subarray(start, end + 1),
+        });
+        if (![200, 201, 206].includes(put.status)) throw new Error(`TikTok subida de trozo ${i + 1}/${total} fallo: ${put.status} ${await put.text()}`);
+      }
       return { externalPostId: data.data.publish_id };
     },
   },
