@@ -528,6 +528,9 @@ export default function Home() {
           <p className="mt-10 border-t border-linea pt-6 text-[0.8rem] text-tenue">
             © 2026 VenBraTech · Unidad del ecosistema VenBraX
           </p>
+          <p className="mt-2 text-[0.8rem] text-tenue">
+            VenBra Tech es el nombre comercial bajo el cual opera Alfonso Enrique Grammatica Rivero, persona física con domicilio en Brasil.
+          </p>
         </div>
       </footer>
     </div>
