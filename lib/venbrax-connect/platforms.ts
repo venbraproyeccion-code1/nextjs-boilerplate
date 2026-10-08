@@ -62,7 +62,7 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
     buildAuthorizeUrl: ({ clientId, redirectUri, state }) => {
       const u = new URL("https://www.tiktok.com/v2/auth/authorize/");
       u.searchParams.set("client_key", clientId);
-      u.searchParams.set("scope", "user.info.basic,video.publish,video.upload");
+      u.searchParams.set("scope", "user.info.basic,video.upload");
       u.searchParams.set("response_type", "code");
       u.searchParams.set("redirect_uri", redirectUri);
       u.searchParams.set("state", state);
