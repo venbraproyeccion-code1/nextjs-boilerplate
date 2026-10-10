@@ -361,11 +361,11 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
           },
           body: JSON.stringify({
             snippet: { title: title || "Sin titulo", description: caption ?? "" },
-            // privacyStatus "private" a proposito, mismo criterio que TikTok:
-            // publicacion real la decide Alfonso a mano hasta que el flujo se
-            // valide end-to-end -- cambiar a "public" es una linea, pero es
-            // una decision de negocio, no algo para dejar en automatico.
-            status: { privacyStatus: "private" },
+            // Alfonso decidio (2026-10-10) publicar en publico. Mientras el
+            // proyecto de Google Cloud no pase la auditoria de cumplimiento de
+            // la API de YouTube, YouTube fuerza estos videos a privado; al
+            // aprobarse la auditoria salen publicos sin tocar el codigo.
+            status: { privacyStatus: "public" },
           }),
         }
       );
