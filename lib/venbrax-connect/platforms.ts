@@ -300,7 +300,29 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       });
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(`YouTube token exchange failed: ${JSON.stringify(data)}`);
-      return { access_token: data.access_token, refresh_token: data.refresh_token, expires_in: data.expires_in, scope: data.scope };
+      // Identifica el canal conectado (youtube.readonly alcanza para
+      // channels.list con mine=true). Si falla no se rompe la conexion:
+      // solo queda sin nombre.
+      let channelId: string | undefined;
+      let channelTitle: string | undefined;
+      try {
+        const chRes = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true", {
+          headers: { Authorization: `Bearer ${data.access_token}` },
+        });
+        const ch = await chRes.json();
+        channelId = ch?.items?.[0]?.id;
+        channelTitle = ch?.items?.[0]?.snippet?.title;
+      } catch {
+        // sin nombre de canal; la conexion sigue valida
+      }
+      return {
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        expires_in: data.expires_in,
+        scope: data.scope,
+        external_account_id: channelId,
+        display_name: channelTitle,
+      };
     },
     refreshAccessToken: async ({ refreshToken, clientId, clientSecret }) => {
       const res = await fetch("https://oauth2.googleapis.com/token", {
