@@ -2,9 +2,8 @@
 import { useEffect, useState } from "react";
 
 // Solo las plataformas que de verdad saben publicar hoy (ver platforms.ts,
-// metodo `publish`) -- mostrar Facebook/Instagram aca seria prometer algo
-// que el backend todavia no hace.
-const PUBLISH_PLATFORMS = ["tiktok", "youtube"];
+// metodo `publish`).
+const PUBLISH_PLATFORMS = ["tiktok", "youtube", "facebook", "instagram"];
 
 interface Connection {
   platform: string;

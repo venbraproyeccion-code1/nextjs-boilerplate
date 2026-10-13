@@ -46,6 +46,41 @@ export interface PlatformConfig {
   }) => Promise<{ externalPostId: string }>;
 }
 
+// Meta (Facebook/Instagram) no deja publicar con el token de usuario que
+// devuelve el login -- hace falta el token de la Pagina que administra ese
+// usuario (via /me/accounts), y para Instagram ademas el ID de la cuenta de
+// Instagram Business/Creator vinculada a esa Pagina. Se guarda el token de
+// usuario de LARGA duracion (no el de la Pagina) en `refresh_token` para
+// poder re-sacar el token de Pagina mas adelante sin pedir login de nuevo.
+// Solo se maneja la PRIMERA Pagina que devuelve /me/accounts -- si un cliente
+// llega a administrar varias Paginas, esto hay que ampliarlo para que elija
+// cual conectar en vez de asumir la primera.
+async function metaGetPageToken(clientId: string, clientSecret: string, shortLivedUserToken: string) {
+  const llUrl = new URL("https://graph.facebook.com/v21.0/oauth/access_token");
+  llUrl.searchParams.set("grant_type", "fb_exchange_token");
+  llUrl.searchParams.set("client_id", clientId);
+  llUrl.searchParams.set("client_secret", clientSecret);
+  llUrl.searchParams.set("fb_exchange_token", shortLivedUserToken);
+  const llRes = await fetch(llUrl.toString());
+  const llData = await llRes.json();
+  if (!llRes.ok || llData.error) throw new Error(`Meta: fallo el canje a token de larga duracion: ${JSON.stringify(llData)}`);
+  const longLivedUserToken = llData.access_token as string;
+  const expiresIn = llData.expires_in as number | undefined;
+
+  const { page } = await metaFirstPage(longLivedUserToken);
+  return { longLivedUserToken, expiresIn, page };
+}
+
+async function metaFirstPage(userToken: string) {
+  const res = await fetch(`https://graph.facebook.com/v21.0/me/accounts?access_token=${encodeURIComponent(userToken)}`);
+  const data = await res.json();
+  if (!res.ok || data.error) throw new Error(`Meta: fallo al listar Paginas: ${JSON.stringify(data)}`);
+  const pages = data.data as Array<{ id: string; name: string; access_token: string }> | undefined;
+  const page = pages?.[0];
+  if (!page) throw new Error("Meta: este usuario no administra ninguna Pagina de Facebook (se requiere al menos una para publicar)");
+  return { page };
+}
+
 // NOTA: cada `buildAuthorizeUrl`/`exchangeToken` de abajo sigue el flujo OAuth2
 // oficial documentado de cada plataforma al momento de escribir esto (sep-2026).
 // Verificar contra la documentacion oficial vigente antes de ir a produccion
@@ -172,7 +207,38 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       const res = await fetch(u.toString());
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(`Facebook token exchange failed: ${JSON.stringify(data)}`);
-      return { access_token: data.access_token, expires_in: data.expires_in };
+
+      const { longLivedUserToken, expiresIn, page } = await metaGetPageToken(clientId, clientSecret, data.access_token);
+      return {
+        access_token: page.access_token,
+        refresh_token: longLivedUserToken,
+        expires_in: expiresIn,
+        external_account_id: page.id,
+        display_name: page.name,
+      };
+    },
+    refreshAccessToken: async ({ refreshToken }) => {
+      const { page } = await metaFirstPage(refreshToken);
+      return { access_token: page.access_token, refresh_token: refreshToken };
+    },
+    publish: async ({ accessToken, externalAccountId, mediaUrl, caption }) => {
+      if (!externalAccountId) throw new Error("Falta el ID de la Pagina de Facebook para publicar");
+      const videoRes = await fetch(mediaUrl);
+      if (!videoRes.ok) throw new Error(`No se pudo descargar el video fuente: ${videoRes.status}`);
+      const bytes = Buffer.from(await videoRes.arrayBuffer());
+
+      const form = new FormData();
+      form.append("access_token", accessToken);
+      if (caption) form.append("description", caption);
+      form.append("source", new Blob([bytes]), "video.mp4");
+
+      const res = await fetch(`https://graph-video.facebook.com/v21.0/${externalAccountId}/videos`, {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(`Facebook publish fallo: ${JSON.stringify(data)}`);
+      return { externalPostId: data.id };
     },
   },
 
@@ -198,7 +264,74 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       const res = await fetch(u.toString());
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(`Instagram token exchange failed: ${JSON.stringify(data)}`);
-      return { access_token: data.access_token, expires_in: data.expires_in };
+
+      const { longLivedUserToken, expiresIn, page } = await metaGetPageToken(clientId, clientSecret, data.access_token);
+
+      // La publicacion en Instagram se hace con el token de la Pagina de
+      // Facebook, nunca con un token "propio" de Instagram -- por eso hace
+      // falta que esa Pagina tenga una cuenta de Instagram Business/Creator
+      // vinculada (se configura desde la propia app de Instagram/Facebook).
+      const igRes = await fetch(
+        `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${encodeURIComponent(page.access_token)}`
+      );
+      const igData = await igRes.json();
+      if (!igRes.ok || igData.error) throw new Error(`Instagram: fallo al leer la cuenta vinculada a la Pagina: ${JSON.stringify(igData)}`);
+      const igAccountId = igData.instagram_business_account?.id as string | undefined;
+      if (!igAccountId) throw new Error(`Instagram: la Pagina "${page.name}" no tiene ninguna cuenta de Instagram Business/Creator vinculada`);
+
+      return {
+        access_token: page.access_token,
+        refresh_token: longLivedUserToken,
+        expires_in: expiresIn,
+        external_account_id: igAccountId,
+        display_name: page.name,
+      };
+    },
+    refreshAccessToken: async ({ refreshToken }) => {
+      const { page } = await metaFirstPage(refreshToken);
+      return { access_token: page.access_token, refresh_token: refreshToken };
+    },
+    publish: async ({ accessToken, externalAccountId, mediaUrl, caption }) => {
+      if (!externalAccountId) throw new Error("Falta el ID de la cuenta de Instagram Business para publicar");
+      // Instagram Content Publishing API: primero se crea un contenedor de
+      // medio apuntando a la URL del video (la firmada de Supabase Storage
+      // sirve, Meta la descarga por su cuenta), despues se espera a que
+      // termine de procesarse, y recien ahi se publica -- no admite subir
+      // los bytes directo como TikTok/Facebook.
+      const createRes = await fetch(`https://graph.facebook.com/v21.0/${externalAccountId}/media`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          media_type: "REELS",
+          video_url: mediaUrl,
+          caption: caption ?? "",
+          access_token: accessToken,
+        }),
+      });
+      const createData = await createRes.json();
+      if (!createRes.ok || createData.error) throw new Error(`Instagram: fallo al crear el contenedor de medio: ${JSON.stringify(createData)}`);
+      const creationId = createData.id as string;
+
+      const deadline = Date.now() + 90_000;
+      let status = "IN_PROGRESS";
+      while (status === "IN_PROGRESS" && Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, 3000));
+        const statusRes = await fetch(
+          `https://graph.facebook.com/v21.0/${creationId}?fields=status_code&access_token=${encodeURIComponent(accessToken)}`
+        );
+        const statusData = await statusRes.json();
+        status = statusData.status_code ?? "ERROR";
+      }
+      if (status !== "FINISHED") throw new Error(`Instagram: el video no termino de procesarse a tiempo (status=${status})`);
+
+      const publishRes = await fetch(`https://graph.facebook.com/v21.0/${externalAccountId}/media_publish`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ creation_id: creationId, access_token: accessToken }),
+      });
+      const publishData = await publishRes.json();
+      if (!publishRes.ok || publishData.error) throw new Error(`Instagram: fallo al publicar: ${JSON.stringify(publishData)}`);
+      return { externalPostId: publishData.id };
     },
   },
 
