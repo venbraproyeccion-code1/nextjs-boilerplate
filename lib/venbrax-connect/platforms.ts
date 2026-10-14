@@ -252,7 +252,7 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       u.searchParams.set("client_id", clientId);
       u.searchParams.set("redirect_uri", redirectUri);
       u.searchParams.set("state", state);
-      u.searchParams.set("scope", "instagram_basic,instagram_content_publish,pages_show_list");
+      u.searchParams.set("scope", "instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement");
       return u.toString();
     },
     exchangeToken: async ({ code, clientId, clientSecret, redirectUri }) => {
