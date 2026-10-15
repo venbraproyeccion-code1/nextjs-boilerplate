@@ -44,6 +44,8 @@ export interface PlatformConfig {
     externalAccountId: string | null;
     /** URL firmada y temporal del archivo en Supabase Storage. */
     mediaUrl: string;
+    /** Solo carruseles de imagenes (Facebook): URLs firmadas de cada foto, en orden. */
+    mediaUrls?: string[];
     title?: string | null;
     caption?: string | null;
   }) => Promise<{ externalPostId: string }>;
@@ -242,8 +244,37 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       const { page } = await metaPickPage(refreshToken, preferredPageId);
       return { access_token: page.access_token, refresh_token: refreshToken };
     },
-    publish: async ({ accessToken, externalAccountId, mediaUrl, caption }) => {
+    publish: async ({ accessToken, externalAccountId, mediaUrl, mediaUrls, caption }) => {
       if (!externalAccountId) throw new Error("Falta el ID de la Pagina de Facebook para publicar");
+
+      // Carrusel de fotos: cada foto se sube SIN publicar (published=false) y despues
+      // un unico post del feed las adjunta todas, asi sale como una sola publicacion.
+      if (mediaUrls && mediaUrls.length > 0) {
+        const photoIds: string[] = [];
+        for (const url of mediaUrls) {
+          const pr = await fetch(`https://graph.facebook.com/v21.0/${externalAccountId}/photos`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url, published: false, access_token: accessToken }),
+          });
+          const pd = await pr.json();
+          if (!pr.ok || pd.error) throw new Error(`Facebook: fallo al subir una foto del carrusel: ${JSON.stringify(pd)}`);
+          photoIds.push(pd.id as string);
+        }
+        const postRes = await fetch(`https://graph.facebook.com/v21.0/${externalAccountId}/feed`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: caption ?? "",
+            attached_media: photoIds.map((id) => ({ media_fbid: id })),
+            access_token: accessToken,
+          }),
+        });
+        const postData = await postRes.json();
+        if (!postRes.ok || postData.error) throw new Error(`Facebook: fallo al publicar el carrusel: ${JSON.stringify(postData)}`);
+        return { externalPostId: postData.id as string };
+      }
+
       const videoRes = await fetch(mediaUrl);
       if (!videoRes.ok) throw new Error(`No se pudo descargar el video fuente: ${videoRes.status}`);
       const bytes = Buffer.from(await videoRes.arrayBuffer());

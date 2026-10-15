@@ -23,6 +23,8 @@ interface PublicationJob {
 interface MediaAsset {
   id: string;
   storage_path: string;
+  type?: string;
+  metadata?: { storage_paths?: string[] } | null;
 }
 
 async function ensureValidAccessToken(
@@ -111,17 +113,25 @@ async function publishOne(job: PublicationJob): Promise<boolean> {
 
   try {
     const [asset]: MediaAsset[] = job.media_asset_id
-      ? await supabaseAdmin.select("vc_media_assets", `id=eq.${job.media_asset_id}&select=id,storage_path`)
+      ? await supabaseAdmin.select("vc_media_assets", `id=eq.${job.media_asset_id}&select=id,storage_path,type,metadata`)
       : [];
     if (!asset) throw new Error("El job no tiene un media asset valido");
 
+    // Carrusel de fotos: metadata.storage_paths guarda cada foto en orden. Hoy solo Facebook lo publica.
+    const carouselPaths = asset.type === "image" && asset.metadata?.storage_paths?.length ? asset.metadata.storage_paths : undefined;
+    if (carouselPaths && job.platform !== "facebook") {
+      throw new Error(`Los carruseles de fotos aun no se publican en ${job.platform}`);
+    }
+
     const { accessToken, externalAccountId } = await ensureValidAccessToken(job.client_id, job.platform);
     const mediaUrl = await getSignedMediaUrl(asset.storage_path);
+    const mediaUrls = carouselPaths ? await Promise.all(carouselPaths.map((p) => getSignedMediaUrl(p))) : undefined;
 
     const result = await platform.publish({
       accessToken,
       externalAccountId,
       mediaUrl,
+      mediaUrls,
       title: job.title,
       caption: job.caption,
     });
