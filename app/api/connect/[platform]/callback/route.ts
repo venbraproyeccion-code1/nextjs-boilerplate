@@ -52,6 +52,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ plat
 
   const redirectUri = `${siteUrl}/api/connect/${platformName}/callback`;
 
+  // Pagina fija de Meta para este cliente, si ya la tiene (evita depender del orden de /me/accounts).
+  let preferredPageId: string | null = null;
+  if (platform.kind === "social") {
+    const prev = await supabaseAdmin.select(
+      "vc_social_connections",
+      `client_id=eq.${state.clientId}&platform=eq.${platformName}&select=preferred_page_id`
+    );
+    preferredPageId = prev?.[0]?.preferred_page_id ?? null;
+  }
+
   let tokenResult;
   try {
     tokenResult = await platform.exchangeToken({
@@ -59,6 +69,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ plat
       clientId,
       clientSecret,
       redirectUri,
+      preferredPageId,
       // @ts-expect-error -- shop solo aplica a shopify, el resto lo ignora
       shop: state.shop ?? shopParam,
     });

@@ -21,6 +21,8 @@ export interface PlatformConfig {
     clientId: string;
     clientSecret: string;
     redirectUri: string;
+    /** Solo Meta: Pagina de Facebook fija de este cliente (vc_social_connections.preferred_page_id). */
+    preferredPageId?: string | null;
   }) => Promise<{
     access_token: string;
     refresh_token?: string;
@@ -34,6 +36,7 @@ export interface PlatformConfig {
     refreshToken: string;
     clientId: string;
     clientSecret: string;
+    preferredPageId?: string | null;
   }) => Promise<{ access_token: string; refresh_token?: string; expires_in?: number }>;
   /** Publica el contenido programado. Solo implementado donde ya hay fase real de publicacion (TikTok/YouTube). */
   publish?: (params: {
@@ -52,10 +55,15 @@ export interface PlatformConfig {
 // Instagram Business/Creator vinculada a esa Pagina. Se guarda el token de
 // usuario de LARGA duracion (no el de la Pagina) en `refresh_token` para
 // poder re-sacar el token de Pagina mas adelante sin pedir login de nuevo.
-// Solo se maneja la PRIMERA Pagina que devuelve /me/accounts -- si un cliente
-// llega a administrar varias Paginas, esto hay que ampliarlo para que elija
-// cual conectar en vez de asumir la primera.
-async function metaGetPageToken(clientId: string, clientSecret: string, shortLivedUserToken: string) {
+// Si el usuario administra varias Paginas, se usa la fijada en
+// vc_social_connections.preferred_page_id; sin preferencia se toma la primera
+// que devuelve /me/accounts (orden no garantizado por Meta).
+async function metaGetPageToken(
+  clientId: string,
+  clientSecret: string,
+  shortLivedUserToken: string,
+  preferredPageId?: string | null
+) {
   const llUrl = new URL("https://graph.facebook.com/v21.0/oauth/access_token");
   llUrl.searchParams.set("grant_type", "fb_exchange_token");
   llUrl.searchParams.set("client_id", clientId);
@@ -67,15 +75,23 @@ async function metaGetPageToken(clientId: string, clientSecret: string, shortLiv
   const longLivedUserToken = llData.access_token as string;
   const expiresIn = llData.expires_in as number | undefined;
 
-  const { page } = await metaFirstPage(longLivedUserToken);
+  const { page } = await metaPickPage(longLivedUserToken, preferredPageId);
   return { longLivedUserToken, expiresIn, page };
 }
 
-async function metaFirstPage(userToken: string) {
-  const res = await fetch(`https://graph.facebook.com/v21.0/me/accounts?access_token=${encodeURIComponent(userToken)}`);
+async function metaPickPage(userToken: string, preferredPageId?: string | null) {
+  const res = await fetch(
+    `https://graph.facebook.com/v21.0/me/accounts?limit=100&access_token=${encodeURIComponent(userToken)}`
+  );
   const data = await res.json();
   if (!res.ok || data.error) throw new Error(`Meta: fallo al listar Paginas: ${JSON.stringify(data)}`);
   const pages = data.data as Array<{ id: string; name: string; access_token: string }> | undefined;
+  if (preferredPageId) {
+    // Con una Pagina fijada nunca se cae a otra en silencio: publicar en la Pagina equivocada es peor que fallar.
+    const fixed = pages?.find((p) => p.id === preferredPageId);
+    if (!fixed) throw new Error(`Meta: la Pagina fijada (${preferredPageId}) ya no esta entre las que este usuario autorizo`);
+    return { page: fixed };
+  }
   const page = pages?.[0];
   if (!page) throw new Error("Meta: este usuario no administra ninguna Pagina de Facebook (se requiere al menos una para publicar)");
   return { page };
@@ -198,7 +214,7 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       u.searchParams.set("scope", "pages_show_list,pages_manage_posts,pages_read_engagement");
       return u.toString();
     },
-    exchangeToken: async ({ code, clientId, clientSecret, redirectUri }) => {
+    exchangeToken: async ({ code, clientId, clientSecret, redirectUri, preferredPageId }) => {
       const u = new URL("https://graph.facebook.com/v21.0/oauth/access_token");
       u.searchParams.set("client_id", clientId);
       u.searchParams.set("client_secret", clientSecret);
@@ -208,7 +224,12 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(`Facebook token exchange failed: ${JSON.stringify(data)}`);
 
-      const { longLivedUserToken, expiresIn, page } = await metaGetPageToken(clientId, clientSecret, data.access_token);
+      const { longLivedUserToken, expiresIn, page } = await metaGetPageToken(
+        clientId,
+        clientSecret,
+        data.access_token,
+        preferredPageId
+      );
       return {
         access_token: page.access_token,
         refresh_token: longLivedUserToken,
@@ -217,8 +238,8 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
         display_name: page.name,
       };
     },
-    refreshAccessToken: async ({ refreshToken }) => {
-      const { page } = await metaFirstPage(refreshToken);
+    refreshAccessToken: async ({ refreshToken, preferredPageId }) => {
+      const { page } = await metaPickPage(refreshToken, preferredPageId);
       return { access_token: page.access_token, refresh_token: refreshToken };
     },
     publish: async ({ accessToken, externalAccountId, mediaUrl, caption }) => {
@@ -255,7 +276,7 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       u.searchParams.set("scope", "instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement");
       return u.toString();
     },
-    exchangeToken: async ({ code, clientId, clientSecret, redirectUri }) => {
+    exchangeToken: async ({ code, clientId, clientSecret, redirectUri, preferredPageId }) => {
       const u = new URL("https://graph.facebook.com/v21.0/oauth/access_token");
       u.searchParams.set("client_id", clientId);
       u.searchParams.set("client_secret", clientSecret);
@@ -265,7 +286,12 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(`Instagram token exchange failed: ${JSON.stringify(data)}`);
 
-      const { longLivedUserToken, expiresIn, page } = await metaGetPageToken(clientId, clientSecret, data.access_token);
+      const { longLivedUserToken, expiresIn, page } = await metaGetPageToken(
+        clientId,
+        clientSecret,
+        data.access_token,
+        preferredPageId
+      );
 
       // La publicacion en Instagram se hace con el token de la Pagina de
       // Facebook, nunca con un token "propio" de Instagram -- por eso hace
@@ -287,8 +313,8 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
         display_name: page.name,
       };
     },
-    refreshAccessToken: async ({ refreshToken }) => {
-      const { page } = await metaFirstPage(refreshToken);
+    refreshAccessToken: async ({ refreshToken, preferredPageId }) => {
+      const { page } = await metaPickPage(refreshToken, preferredPageId);
       return { access_token: page.access_token, refresh_token: refreshToken };
     },
     publish: async ({ accessToken, externalAccountId, mediaUrl, caption }) => {

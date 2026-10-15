@@ -31,7 +31,7 @@ async function ensureValidAccessToken(
 ): Promise<{ accessToken: string; externalAccountId: string | null }> {
   const [connection] = await supabaseAdmin.select(
     "vc_social_connections",
-    `client_id=eq.${clientId}&platform=eq.${platformName}&select=id,external_account_id,status`
+    `client_id=eq.${clientId}&platform=eq.${platformName}&select=id,external_account_id,status,preferred_page_id`
   );
   if (!connection || connection.status !== "connected") {
     throw new Error(`Cliente ${clientId} no tiene ${platformName} conectado`);
@@ -69,6 +69,7 @@ async function ensureValidAccessToken(
     refreshToken: token.refresh_token as string,
     clientId: clientIdEnv,
     clientSecret: clientSecretEnv,
+    preferredPageId: (connection.preferred_page_id as string | null) ?? null,
   });
 
   const newExpiresAt = refreshed.expires_in ? new Date(Date.now() + refreshed.expires_in * 1000).toISOString() : null;
