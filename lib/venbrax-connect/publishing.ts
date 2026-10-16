@@ -119,7 +119,7 @@ async function publishOne(job: PublicationJob): Promise<boolean> {
 
     // Carrusel de fotos: metadata.storage_paths guarda cada foto en orden. Hoy solo Facebook lo publica.
     const carouselPaths = asset.type === "image" && asset.metadata?.storage_paths?.length ? asset.metadata.storage_paths : undefined;
-    if (carouselPaths && job.platform !== "facebook" && job.platform !== "instagram") {
+    if (carouselPaths && job.platform !== "facebook" && job.platform !== "instagram" && job.platform !== "threads") {
       throw new Error(`Los carruseles de fotos aun no se publican en ${job.platform}`);
     }
 
