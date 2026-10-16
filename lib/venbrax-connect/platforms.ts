@@ -348,8 +348,42 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       const { page } = await metaPickPage(refreshToken, preferredPageId);
       return { access_token: page.access_token, refresh_token: refreshToken };
     },
-    publish: async ({ accessToken, externalAccountId, mediaUrl, caption }) => {
+    publish: async ({ accessToken, externalAccountId, mediaUrl, mediaUrls, caption }) => {
       if (!externalAccountId) throw new Error("Falta el ID de la cuenta de Instagram Business para publicar");
+      // Carrusel de fotos: un contenedor por foto (is_carousel_item), uno CAROUSEL con los hijos y luego media_publish.
+      if (mediaUrls && mediaUrls.length > 0) {
+        if (mediaUrls.length < 2 || mediaUrls.length > 10) throw new Error("Instagram: un carrusel necesita entre 2 y 10 fotos");
+        const igPost = async (path: string, body: Record<string, unknown>) => {
+          const r = await fetch(`https://graph.facebook.com/v21.0/${path}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...body, access_token: accessToken }),
+          });
+          const d = await r.json();
+          if (!r.ok || d.error) throw new Error(`Instagram: ${path.split("/").pop()} fallo: ${JSON.stringify(d)}`);
+          return d as { id: string };
+        };
+        const waitFinished = async (containerId: string, ms: number) => {
+          const limit = Date.now() + ms;
+          let st = "IN_PROGRESS";
+          while (st === "IN_PROGRESS" && Date.now() < limit) {
+            await new Promise((res) => setTimeout(res, 2000));
+            const sr = await fetch(`https://graph.facebook.com/v21.0/${containerId}?fields=status_code&access_token=${encodeURIComponent(accessToken)}`);
+            st = (await sr.json()).status_code ?? "ERROR";
+          }
+          if (st !== "FINISHED") throw new Error(`Instagram: el contenedor ${containerId} no termino de procesarse (status=${st})`);
+        };
+        const children: string[] = [];
+        for (const url of mediaUrls) {
+          const child = await igPost(`${externalAccountId}/media`, { image_url: url, is_carousel_item: true });
+          await waitFinished(child.id, 30_000);
+          children.push(child.id);
+        }
+        const parent = await igPost(`${externalAccountId}/media`, { media_type: "CAROUSEL", children: children.join(","), caption: caption ?? "" });
+        await waitFinished(parent.id, 60_000);
+        const published = await igPost(`${externalAccountId}/media_publish`, { creation_id: parent.id });
+        return { externalPostId: published.id };
+      }
       // Instagram Content Publishing API: primero se crea un contenedor de
       // medio apuntando a la URL del video (la firmada de Supabase Storage
       // sirve, Meta la descarga por su cuenta), despues se espera a que
