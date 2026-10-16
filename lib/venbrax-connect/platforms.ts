@@ -454,7 +454,7 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       });
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(`Threads token exchange failed: ${JSON.stringify(data)}`);
-      const userId = String(data.user_id ?? "");
+      let userId = String(data.user_id ?? ""); // data.user_id llega como numero JSON y pierde precision: el ID bueno se lee de /me
 
       // El token que devuelve el login dura 1 hora: se canjea por uno de larga duracion (60 dias).
       const llUrl = new URL("https://graph.threads.net/access_token");
@@ -466,9 +466,10 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
       if (!llRes.ok || ll.error) throw new Error(`Threads: fallo el canje a token de larga duracion: ${JSON.stringify(ll)}`);
 
       let displayName: string | undefined;
-      const meRes = await fetch(`https://graph.threads.net/v1.0/me?fields=username&access_token=${encodeURIComponent(ll.access_token)}`);
+      const meRes = await fetch(`https://graph.threads.net/v1.0/me?fields=id,username&access_token=${encodeURIComponent(ll.access_token)}`);
       const me = await meRes.json();
       if (meRes.ok && me.username) displayName = `@${me.username}`;
+      if (meRes.ok && me.id) userId = String(me.id);
 
       // El token de larga duracion se guarda tambien en refresh_token: Threads lo renueva a si mismo mientras no haya vencido.
       return {
@@ -519,19 +520,19 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
         if (mediaUrls.length < 2 || mediaUrls.length > 20) throw new Error("Threads: un carrusel necesita entre 2 y 20 elementos");
         const children: string[] = [];
         for (const url of mediaUrls) {
-          const child = await thPost(`${externalAccountId}/threads`, { media_type: "IMAGE", image_url: url, is_carousel_item: true });
+          const child = await thPost("me/threads", { media_type: "IMAGE", image_url: url, is_carousel_item: true });
           await waitFinished(child.id, 30_000);
           children.push(child.id);
         }
-        const parent = await thPost(`${externalAccountId}/threads`, { media_type: "CAROUSEL", children: children.join(","), text });
+        const parent = await thPost("me/threads", { media_type: "CAROUSEL", children: children.join(","), text });
         await waitFinished(parent.id, 60_000);
         creationId = parent.id;
       } else {
-        const item = await thPost(`${externalAccountId}/threads`, { media_type: "VIDEO", video_url: mediaUrl, text });
+        const item = await thPost("me/threads", { media_type: "VIDEO", video_url: mediaUrl, text });
         await waitFinished(item.id, 90_000);
         creationId = item.id;
       }
-      const published = await thPost(`${externalAccountId}/threads_publish`, { creation_id: creationId });
+      const published = await thPost("me/threads_publish", { creation_id: creationId });
       return { externalPostId: published.id };
     },
   },
