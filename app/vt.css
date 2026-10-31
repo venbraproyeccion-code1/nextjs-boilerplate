@@ -1002,6 +1002,13 @@ html.vt-sin-anim .vt-split .wi {
   display: grid;
   transform-origin: 50% 0;
 }
+.vt-proj-shade {
+  position: absolute;
+  inset: 0;
+  background: #06070a;
+  opacity: 0;
+  pointer-events: none;
+}
 .vt-proj-art {
   position: relative;
   min-height: 250px;
@@ -1121,6 +1128,12 @@ html.vt-sin-anim .vt-split .wi {
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr;
+}
+.vt-units > div {
+  display: flex;
+}
+.vt-units .vt-card {
+  flex: 1;
 }
 @media (min-width: 700px) {
   .vt-units {

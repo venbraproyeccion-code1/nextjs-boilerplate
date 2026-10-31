@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Lightformer, PerformanceMonitor } from "@react-three/drei";
 import {
   BufferGeometry,
@@ -257,7 +257,6 @@ function Camara() {
   const altoDoc = useRef(1);
   const suav = useRef(0);
   const fov = useRef(50);
-  const { camera } = useThree();
 
   useEffect(() => {
     const medir = () => {
@@ -281,7 +280,7 @@ function Camara() {
 
   const suaveX = useRef(0);
   const suaveY = useRef(0);
-  useFrame(({ clock }, dt) => {
+  useFrame(({ clock, camera }, dt) => {
     const objetivo = MathUtils.clamp(window.scrollY / altoDoc.current, 0, 1);
     const antes = suav.current;
     suav.current = MathUtils.damp(antes, objetivo, 4.5, dt);
@@ -317,17 +316,13 @@ function Camara() {
 
 export default function Scene3D() {
   const [nivel, setNivel] = useState(0);
-  const [compacto, setCompacto] = useState<boolean | null>(null);
+  // Solo se monta en el cliente (ssr: false): se puede medir de entrada.
+  const [compacto] = useState(() => window.innerWidth / window.innerHeight < 0.95);
 
-  useEffect(() => {
-    setCompacto(window.innerWidth / window.innerHeight < 0.95);
-  }, []);
-
-  const dprMax = Math.min(typeof window === "undefined" ? 1 : window.devicePixelRatio, 2);
+  const dprMax = Math.min(window.devicePixelRatio, 2);
   // Si el equipo se queda corto de cuadros, baja la resolucion interna y quita lo accesorio.
   const dpr = Math.max(1, nivel === 0 ? dprMax : nivel === 1 ? Math.min(dprMax, 1.5) : 1);
 
-  if (compacto === null) return null;
   const heroPos: [number, number, number] = compacto ? [0, 1.8, 0] : [3.2, 0.1, 0];
 
   return (
