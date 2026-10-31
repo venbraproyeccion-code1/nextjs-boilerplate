@@ -556,6 +556,20 @@ html.vt-sin-anim .vt-split .wi {
 .vt-hero h1 {
   text-shadow: 0 4px 60px rgba(6, 7, 10, 0.6);
 }
+.vt-rise {
+  animation: vt-rise 1s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1s + 0.35s);
+}
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 .vt-cue {
   display: inline-flex;
   align-items: center;
@@ -725,12 +739,6 @@ html.vt-sin-anim .vt-split .wi {
   transition: transform 0.12s linear, border-color 0.4s;
   will-change: transform;
 }
-.vt-tilt .z1 {
-  transform: translateZ(34px);
-}
-.vt-tilt .z2 {
-  transform: translateZ(60px);
-}
 
 .vt-num {
   font-family: var(--font-plex);
@@ -745,7 +753,11 @@ html.vt-sin-anim .vt-split .wi {
   gap: 1rem;
   grid-template-columns: 1fr;
 }
+.vt-bento > div {
+  display: flex;
+}
 .vt-bento .vt-card {
+  flex: 1;
   padding: clamp(1.4rem, 3vw, 2.1rem);
   display: flex;
   flex-direction: column;
