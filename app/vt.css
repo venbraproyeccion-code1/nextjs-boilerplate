@@ -98,7 +98,6 @@ html.vt-3d .vt-poster {
 .vt-poster-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
   opacity: 0.55;
   animation: vt-drift 16s ease-in-out infinite alternate;
   will-change: transform;
@@ -271,17 +270,15 @@ html.js .vt-split:not(.vt-hero-split).in .wi {
 /* El titular de portada anima solo con CSS, desde el primer cuadro, para no
    retrasar el LCP esperando a JavaScript. Arranca ya parcialmente visible. */
 .vt-hero-split .wi {
-  animation: vt-word 1.1s var(--e) both;
-  animation-delay: calc(var(--i, 0) * 70ms + 0.05s);
+  animation: vt-word 0.9s var(--e) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
 }
 @keyframes vt-word {
   from {
-    transform: translate3d(0, 46%, 0);
-    opacity: 0.001;
+    transform: translate3d(0, 38%, 0);
   }
   to {
     transform: none;
-    opacity: 1;
   }
 }
 
@@ -463,6 +460,7 @@ html.vt-sin-anim .vt-split .wi {
   gap: 0.4rem;
   padding: 6rem 1.5rem 2rem;
   background: rgba(6, 7, 10, 0.97);
+  overflow: hidden;
   clip-path: circle(0% at calc(100% - 2.6rem) 2.6rem);
   visibility: hidden;
   transition: clip-path 0.8s var(--e), visibility 0s linear 0.8s;
@@ -475,10 +473,11 @@ html.vt-sin-anim .vt-split .wi {
 .vt-menu a.l {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(2.2rem, 11vw, 3.6rem);
+  font-size: clamp(1.9rem, 9vw, 3.4rem);
   letter-spacing: -0.045em;
   line-height: 1.04;
   padding: 0.15em 0;
+  min-width: 0;
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: baseline;
@@ -1310,6 +1309,17 @@ html.vt-sin-anim .vt-split .wi {
 .vt-contact {
   position: relative;
 }
+/* La red 3D final queda visible pero tenue detras del texto, para no restar lectura. */
+.vt-contact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(6, 7, 10, 0), rgba(6, 7, 10, 0.74) 24%, rgba(6, 7, 10, 0.74));
+}
+.vt-contact > .vt-wrap {
+  position: relative;
+}
 .vt-contact-grid {
   display: grid;
   gap: 1rem;
@@ -1412,7 +1422,7 @@ html.vt-sin-anim .vt-split .wi {
 .vt-foot a:hover {
   color: var(--ink);
 }
-.vt-foot h4 {
+.vt-foot .fh {
   font-family: var(--font-plex);
   font-weight: 500;
   font-size: 0.68rem;

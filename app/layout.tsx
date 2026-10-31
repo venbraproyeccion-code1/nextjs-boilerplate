@@ -5,7 +5,9 @@ import CookieConsent from "./components/CookieConsent";
 
 // Geist se conserva: lo usan /industrial, /hub-legal, /audit y /enterprise-audit.
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+// Geist Mono solo pinta etiquetas pequenas: no se precarga para no competir
+// por ancho de banda con el titular (LCP).
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], preload: false });
 
 // Titulos cineticos de la portada. Geist (arriba) hace de texto corrido y
 // Geist Mono de etiquetas: una sola familia menos que antes, menos bytes.

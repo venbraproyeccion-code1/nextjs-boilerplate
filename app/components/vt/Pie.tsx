@@ -26,7 +26,7 @@ export default function Pie() {
           </div>
           <nav aria-label="Pie" style={{ display: "flex", gap: "4rem", flexWrap: "wrap" }}>
             <div>
-              <h4>Sitio</h4>
+              <p className="fh">Sitio</p>
               {SITIO.map(([n, h]) => (
                 <a key={h} href={h}>
                   {n}
@@ -34,7 +34,7 @@ export default function Pie() {
               ))}
             </div>
             <div>
-              <h4>Legal</h4>
+              <p className="fh">Legal</p>
               <a href="/privacidad">Privacidad</a>
               <a href="/terminos">Términos</a>
             </div>

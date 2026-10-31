@@ -6,10 +6,18 @@ import { useEffect, useState } from "react";
 // El 3D vive en su propio paquete: no pesa nada hasta que el equipo lo pide.
 const Scene3D = dynamic(() => import("./Scene3D"), { ssr: false });
 
-function hayWebGL(): boolean {
+/** WebGL disponible y con GPU real. Un renderizador por software (SwiftShader,
+ *  llvmpipe...) pinta el 3D a cuadros por minuto y bloquea el hilo principal:
+ *  en ese caso es mejor quedarse con el cartel estatico. */
+function hayWebGLConGPU(): boolean {
   try {
     const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    const gl = (c.getContext("webgl2") || c.getContext("webgl")) as WebGLRenderingContext | null;
+    if (!gl) return false;
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    const nombre = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : "";
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return !/swiftshader|llvmpipe|softpipe|software|microsoft basic/i.test(nombre);
   } catch {
     return false;
   }
@@ -29,7 +37,10 @@ export default function SceneLoader() {
     const ahorro = !!nav.connection?.saveData || nav.connection?.effectiveType === "2g";
     const pocaPotencia =
       (nav.hardwareConcurrency ?? 4) < 4 || (nav.deviceMemory !== undefined && nav.deviceMemory < 2);
-    if (reducido || ahorro || pocaPotencia || !hayWebGL()) return;
+    // ?3d=1 fuerza el 3D (pruebas); ?3d=0 lo apaga. Nunca se salta prefers-reduced-motion.
+    const forzar = new URLSearchParams(location.search).get("3d");
+    if (reducido || forzar === "0") return;
+    if (forzar !== "1" && (ahorro || pocaPotencia || !hayWebGLConGPU())) return;
 
     let hecho = false;
     const encender = () => {
