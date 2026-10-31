@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Imagenes: AVIF primero y WebP de respaldo, con tamanos responsivos.
+  // (next/image sirve el formato que el navegador acepta y el ancho justo.)
+  images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [360, 414, 640, 768, 1024, 1280, 1536, 1920, 2560],
+    imageSizes: [96, 160, 256, 384, 512],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+  },
+  experimental: {
+    // three y drei exportan cientos de simbolos: importa solo los usados.
+    optimizePackageImports: ["@react-three/drei", "three"],
+  },
   async redirects() {
     return [
       {

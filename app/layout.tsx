@@ -1,39 +1,27 @@
-import type { Metadata } from "next";
-import {
-  Geist,
-  Geist_Mono,
-  Space_Grotesk,
-  Inter,
-  IBM_Plex_Mono,
-} from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "./components/CookieConsent";
 
 // Geist se conserva: lo usan /industrial, /hub-legal, /audit y /enterprise-audit.
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+// Geist Mono solo pinta etiquetas pequenas: no se precarga para no competir
+// por ancho de banda con el titular (LCP).
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], preload: false });
 
-// Tipografias de la identidad VenBraTech, para la portada.
-const space = Space_Grotesk({
-  variable: "--font-space",
+// Titulos cineticos de la portada. Geist (arriba) hace de texto corrido y
+// Geist Mono de etiquetas: una sola familia menos que antes, menos bytes.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
 });
 
 const SITIO = "https://venbratech.com";
+
+export const viewport: Viewport = {
+  themeColor: "#06070a",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITIO),
@@ -95,7 +83,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} ${space.variable} ${inter.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
     >
       <head>
         {/* Verificacion de Impact.com (programa de afiliados Nexo). No tocar. */}
@@ -113,7 +101,11 @@ export default function RootLayout({
             corre, .js nunca se anade y el CSS deja el contenido visible. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: "document.documentElement.classList.add('js')",
+            // .js: el CSS puede preparar las animaciones de entrada.
+            // Red de seguridad: si el script de animacion no llega en 6 s,
+            // .vt-sin-anim deja todo el contenido visible.
+            __html:
+              "var d=document.documentElement;d.classList.add('js');setTimeout(function(){if(!d.classList.contains('vt-ready'))d.classList.add('vt-sin-anim')},6000)",
           }}
         />
         <script

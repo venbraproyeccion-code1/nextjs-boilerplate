@@ -138,6 +138,9 @@ export type Proyecto = {
   problema: string;
   resultado: string;
   enlace?: string;
+  /** Captura real del proyecto (ruta en /public, p. ej. "/proyectos/yool.webp").
+   *  Si falta, la tarjeta usa arte vectorial. Se sirve por next/image en AVIF/WebP. */
+  captura?: string;
 };
 
 /**
