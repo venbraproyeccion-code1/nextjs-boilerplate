@@ -26,62 +26,29 @@ body {
 }
 
 /* ------------------------------------------------------------------
-   Identidad VenBraTech — la misma del portafolio de la division
-   (venbratech-portafolio.pages.dev), para que ambas propiedades se lean
-   como una sola empresa.
+   Identidad VenBraTech — portada rediseñada (2026-11).
 
    Se ANADE al tema existente en lugar de sustituirlo: /industrial,
    /hub-legal, /audit y /enterprise-audit siguen usando los tokens y el
    body de arriba sin cambios. El fondo oscuro se aplica solo en el
-   contenedor de la portada, no en el body.
+   contenedor de la portada (.vt), no en el body.
+
+   Paleta: fondo casi negro, verde menta como acento principal; violeta
+   electrico y hielo solo como luz de apoyo (3D, brillos, degradados).
    ------------------------------------------------------------------ */
 @theme {
-  --color-fondo: #0a0b0d;
-  --color-panel: #121417;
-  --color-linea: rgba(255, 255, 255, 0.08);
-  --color-linea2: rgba(255, 255, 255, 0.16);
-  --color-texto: #eceef1;
-  --color-tenue: #9ba1a9;
+  --color-fondo: #06070a;
+  --color-panel: #0d0f13;
+  --color-linea: rgba(255, 255, 255, 0.09);
+  --color-linea2: rgba(255, 255, 255, 0.18);
+  --color-texto: #f1f3f5;
+  --color-tenue: #a3a9b2;
   --color-acento: #00e0a4;
   --color-acento2: #29efbb;
+  --color-violeta: #8b6cff;
+  --color-hielo: #bdf4ff;
 
-  --font-display: var(--font-space), system-ui, sans-serif;
-  --font-cuerpo: var(--font-inter), system-ui, sans-serif;
-  --font-plex: var(--font-plex-mono), ui-monospace, monospace;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* Aparicion al hacer scroll.
-   El estado de reposo es VISIBLE: la clase .js solo la anade un script del
-   head, asi que si el JavaScript no corre el contenido se ve igual. La
-   animacion es adorno, nunca requisito. */
-.rev {
-  opacity: 1;
-}
-html.js .rev {
-  opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-html.js .rev.dentro {
-  opacity: 1;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  html.js .rev {
-    opacity: 1 !important;
-    transform: none !important;
-  }
+  --font-display: var(--font-bricolage), "Arial Black", system-ui, sans-serif;
+  --font-cuerpo: var(--font-geist-sans), system-ui, sans-serif;
+  --font-plex: var(--font-geist-mono), ui-monospace, monospace;
 }
