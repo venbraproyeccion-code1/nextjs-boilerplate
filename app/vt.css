@@ -31,6 +31,8 @@
 html:has(.vt) {
   scroll-behavior: smooth;
   background: #06070a;
+  --cc-accent: #00e0a4;
+  --cc-border: rgba(0, 224, 164, 0.28);
 }
 body:has(.vt) {
   background: #06070a;

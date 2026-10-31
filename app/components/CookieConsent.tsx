@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 
 const C = {
   black: "#0a0a0a",
-  accent: "#c5a455",
+  // En la portada rediseñada, vt.css define --cc-accent / --cc-border (menta);
+  // en el resto del sitio queda el dorado de siempre.
+  accent: "var(--cc-accent, #c5a455)",
   white: "#f8f8f8",
   gray: "#8b8b8b",
-  border: "rgba(197,164,85,0.25)",
+  border: "var(--cc-border, rgba(197,164,85,0.25))",
 };
 
 const STORAGE_KEY = "venbratech_cookie_consent";
@@ -41,10 +43,10 @@ export default function CookieConsent() {
         zIndex: 1000,
         background: "rgba(10,10,10,0.98)",
         borderTop: `1px solid ${C.border}`,
-        padding: "20px 5%",
+        padding: "14px 5%",
         display: "flex",
         flexWrap: "wrap",
-        gap: 16,
+        gap: 12,
         alignItems: "center",
         justifyContent: "space-between",
       }}
@@ -52,10 +54,10 @@ export default function CookieConsent() {
       <p
         style={{
           fontFamily: "'DM Sans', sans-serif",
-          fontSize: 13,
+          fontSize: 12.5,
           color: C.gray,
           maxWidth: 640,
-          lineHeight: 1.6,
+          lineHeight: 1.5,
           margin: 0,
         }}
       >
@@ -78,7 +80,7 @@ export default function CookieConsent() {
             color: C.white,
             background: "transparent",
             border: `1px solid ${C.border}`,
-            padding: "10px 20px",
+            padding: "9px 18px",
             borderRadius: 6,
             cursor: "pointer",
           }}
@@ -96,7 +98,7 @@ export default function CookieConsent() {
             color: C.black,
             background: C.accent,
             border: "none",
-            padding: "10px 20px",
+            padding: "9px 18px",
             borderRadius: 6,
             cursor: "pointer",
           }}

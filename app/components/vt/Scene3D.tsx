@@ -81,7 +81,7 @@ function Fragmentos({ compacto }: { compacto: boolean }) {
     for (let i = 0; i < n; i++) {
       let x = (r() - 0.5) * 2 * anchoX;
       let y = (r() - 0.5) * 2 * altoY;
-      const z = 7 - r() * (RECORRIDO + 12);
+      const z = -1.5 - r() * (RECORRIDO + 10);
       // Corredor libre alrededor del eje de la camara para no atravesarla.
       const d = Math.hypot(x, y);
       if (d < 2.4) {
@@ -92,8 +92,8 @@ function Fragmentos({ compacto }: { compacto: boolean }) {
       dispersion.set([x, y, z], i * 3);
       giro.set([r() * PI2, r() * PI2, r() * PI2], i * 3);
       vel.set([(r() - 0.5) * 0.7, (r() - 0.5) * 0.7, (r() - 0.5) * 0.7], i * 3);
-      const s = 0.22 + r() * 0.5;
-      param.set([s, s * (1.5 + r() * 1.6), r() * PI2, r() * 0.05], i * 4);
+      const s = 0.16 + r() * 0.34;
+      param.set([s, s * (1.5 + r() * 1.4), r() * PI2, r() * 0.05], i * 4);
     }
     return { dispersion, giro, vel, param };
   }, [n, compacto]);
@@ -323,7 +323,7 @@ export default function Scene3D() {
   // Si el equipo se queda corto de cuadros, baja la resolucion interna y quita lo accesorio.
   const dpr = Math.max(1, nivel === 0 ? dprMax : nivel === 1 ? Math.min(dprMax, 1.5) : 1);
 
-  const heroPos: [number, number, number] = compacto ? [0, 1.8, 0] : [3.2, 0.1, 0];
+  const heroPos: [number, number, number] = compacto ? [0, 2.5, 0] : [3.2, 0.1, 0];
 
   return (
     <div
@@ -357,7 +357,7 @@ export default function Scene3D() {
         <Camara />
         <Fragmentos compacto={compacto} />
         <Red compacto={compacto} />
-        <Nucleo posicion={heroPos} escala={compacto ? 0.8 : 1.25} />
+        <Nucleo posicion={heroPos} escala={compacto ? 0.72 : 1.25} />
         <Nucleo posicion={[0, 0, CENTRO_Z]} escala={compacto ? 0.55 : 0.95} />
         {nivel < 2 && <Polvo cantidad={compacto ? 260 : 520} />}
       </Canvas>
