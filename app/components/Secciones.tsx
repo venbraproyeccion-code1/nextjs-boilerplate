@@ -29,7 +29,7 @@ const H2 =
 const BTN_ORO =
   "inline-flex items-center rounded-xl bg-[#e8b93f] px-7 py-3.5 text-[0.95rem] font-semibold text-[#17120a] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] transition-colors hover:bg-[#f6dc86]";
 const BTN_LINEA =
-  "inline-flex items-center rounded-xl border border-white/15 bg-white/[0.04] px-7 py-3.5 text-[0.95rem] font-medium text-[#f1eee6] backdrop-blur transition-colors hover:border-[#e8b93f]/60";
+  "inline-flex items-center rounded-xl border border-white/15 bg-white/[0.04] px-7 py-3.5 text-[0.95rem] font-medium text-[#f1eee6]  transition-colors hover:border-[#e8b93f]/60";
 const MONO = "font-[family-name:var(--font-geist-mono)]";
 
 function Contenedor({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -317,7 +317,6 @@ function TarjetaProyecto({ i, p }: { i: number; p: (typeof PROYECTOS)[number] })
           scale: reduce ? 1 : escala,
           opacity: reduce ? 1 : brillo,
           transformOrigin: "50% 0%",
-          boxShadow: "0 40px 90px -40px rgba(0,0,0,0.9)",
         }}
       >
         <div className="flex flex-col p-8 md:p-11">
@@ -663,8 +662,6 @@ export function Contacto() {
           y: reduce ? 0 : globoY,
           scale: reduce ? 1 : globoEsc,
           opacity: 0.55,
-          WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 45%)",
-          maskImage: "linear-gradient(to bottom, transparent, #000 45%)",
         }}
       >
         <img
@@ -681,7 +678,7 @@ export function Contacto() {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(900px 500px at 20% 0%, rgba(232,185,63,0.12), transparent 70%), linear-gradient(to bottom, #0a0b0d 0%, transparent 35%, #0a0b0d 100%)",
+            "radial-gradient(900px 500px at 20% 0%, rgba(232,185,63,0.12), transparent 70%), linear-gradient(to bottom, #0a0b0d 0%, #0a0b0d 30%, rgba(10,11,13,0.55) 62%, #0a0b0d 100%)",
         }}
       />
       <Contenedor>
@@ -704,7 +701,7 @@ export function Contacto() {
               target="_blank"
               rel="noopener"
               fuerza={0.4}
-              className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#e8b93f]/40 bg-gradient-to-br from-[#e8b93f]/[0.14] to-[#101116]/80 p-9 backdrop-blur transition-colors hover:border-[#e8b93f]"
+              className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#e8b93f]/40 bg-gradient-to-br from-[#e8b93f]/[0.14] to-[#101116]/80 p-9 transition-colors hover:border-[#e8b93f]"
             >
               <span className="text-[0.95rem] font-medium text-[#e8b93f]">WhatsApp</span>
               <span className="mt-3 text-[clamp(1.6rem,2.6vw,2.2rem)] font-medium tracking-[-0.03em] text-[#f1eee6]">
@@ -722,7 +719,7 @@ export function Contacto() {
             <Magnetico
               href={`mailto:${CONTACTO.correo}?subject=Proyecto%20con%20VenBraTech`}
               fuerza={0.4}
-              className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/15 bg-[#101116]/80 p-9 backdrop-blur transition-colors hover:border-[#e8b93f]/70"
+              className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/15 bg-[#101116]/80 p-9 transition-colors hover:border-[#e8b93f]/70"
             >
               <span className="text-[0.95rem] font-medium text-[#e8b93f]">Correo</span>
               <span className="mt-3 text-[clamp(1.6rem,2.6vw,2.2rem)] font-medium tracking-[-0.03em] text-[#f1eee6]">

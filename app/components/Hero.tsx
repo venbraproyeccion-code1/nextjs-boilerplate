@@ -10,6 +10,7 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
+import { useBajoRendimiento } from "./ui";
 
 /**
  * Hero de la portada de VenBraTech.
@@ -119,12 +120,10 @@ function PalabraLema({
 }) {
   const o = useTransform(p, rango, [0, 1]);
   const y = useTransform(p, rango, [46, 0]);
-  const b = useTransform(p, rango, [10, 0]);
-  const filtro = useTransform(b, (v) => `blur(${v}px)`);
   return (
     <motion.span
       className="whitespace-nowrap font-medium tracking-[-0.03em]"
-      style={reduce ? undefined : { opacity: o, y, filter: filtro }}
+      style={reduce ? undefined : { opacity: o, y }}
     >
       {texto}
     </motion.span>
@@ -134,7 +133,9 @@ function PalabraLema({
 /* -------------------------------------------------------------- hero */
 
 export default function Hero() {
-  const reduce = useReducedMotion() ?? false;
+  const reduceSistema = useReducedMotion() ?? false;
+  const bajo = useBajoRendimiento();
+  const reduce = reduceSistema;
   const seccion = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -200,7 +201,7 @@ export default function Hero() {
           aria-hidden
           className="pointer-events-none absolute inset-y-[-10%] right-[8%] w-[2px] rotate-[28deg]"
           style={{
-            x: reduce ? 0 : rayoX,
+            x: reduce || bajo ? 0 : rayoX,
             background: `linear-gradient(transparent, ${ORO}, transparent)`,
             opacity: 0.45,
           }}
@@ -209,7 +210,7 @@ export default function Hero() {
           aria-hidden
           className="pointer-events-none absolute inset-y-[-10%] right-[2%] w-[2px] rotate-[28deg]"
           style={{
-            x: reduce ? 0 : rayoX,
+            x: reduce || bajo ? 0 : rayoX,
             background: `linear-gradient(transparent, ${ORO}, transparent)`,
             opacity: 0.22,
           }}
@@ -223,9 +224,7 @@ export default function Hero() {
             scale: reduce ? 1 : globoEscala,
             y: reduce ? 0 : globoY,
             opacity: reduce ? 0.9 : globoLuz,
-            x: reduce ? 0 : fondoX,
-            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, #000 38%)",
-            maskImage: "linear-gradient(to bottom, transparent 0%, #000 38%)",
+            x: reduce || bajo ? 0 : fondoX,
           }}
         >
           <img
@@ -307,7 +306,7 @@ export default function Hero() {
               <Magnetico
                 href="#soluciones"
                 reduce={reduce}
-                className="inline-flex items-center rounded-xl border border-white/15 bg-white/[0.04] px-7 py-3.5 text-[0.95rem] font-medium text-[#f1eee6] backdrop-blur transition-colors hover:border-[#e8b93f]/60"
+                className="inline-flex items-center rounded-xl border border-white/15 bg-white/[0.04] px-7 py-3.5 text-[0.95rem] font-medium text-[#f1eee6] transition-colors hover:border-[#e8b93f]/60"
               >
                 Conocer VenBraTech
               </Magnetico>
@@ -320,8 +319,8 @@ export default function Hero() {
             style={reduce ? undefined : { scale: embEscala, y: embY, opacity: embOpac }}
           >
             <motion.div
-              initial={reduce ? false : { opacity: 0, scale: 0.86, filter: "blur(22px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              initial={reduce ? false : { opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.5, ease: EASE, delay: 0.2 }}
             >
               <motion.div
@@ -330,7 +329,7 @@ export default function Hero() {
               >
                 <motion.div
                   className="relative"
-                  style={reduce ? undefined : { rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
+                  style={reduce || bajo ? undefined : { rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
                 >
                   <img
                     src="/brand/emblema.webp"
@@ -342,7 +341,7 @@ export default function Hero() {
                     fetchPriority="high"
                   />
                   {/* destello que cruza el emblema */}
-                  {!reduce && (
+                  {!reduce && !bajo && (
                     <motion.div
                       aria-hidden
                       className="pointer-events-none absolute inset-0"

@@ -31,7 +31,7 @@ export default function Home() {
       <ProgresoScroll />
 
       {/* ---------------------------------------------------------- NAV */}
-      <nav className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#07070a]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#07070a]/95">
         <div className="mx-auto flex h-[66px] w-full max-w-[1280px] items-center justify-between px-6">
           <a href="#inicio" aria-label="VenBraTech, inicio" className="flex items-center">
             <img

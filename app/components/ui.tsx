@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import {
   motion,
   useMotionValue,
@@ -93,8 +94,8 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={reduce ? false : { opacity: 0, y, x, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, x: 0, filter: "blur(0px)" }}
+      initial={reduce ? false : { opacity: 0, y, x }}
+      whileInView={{ opacity: 1, y: 0, x: 0 }}
       viewport={{ once: true, amount }}
       transition={{ duration: 0.9, ease: EASE, delay }}
     >
@@ -199,6 +200,26 @@ export function Foco({
       />
       <div className="relative h-full">{children}</div>
     </Tag>
+  );
+}
+
+/**
+ * Equipos con poca CPU/RAM (o que piden ahorrar datos): se apagan los efectos
+ * que cargan la GPU (inclinacion 3D, destello con mascara, resplandores).
+ * useSyncExternalStore evita desajuste de hidratacion: en servidor es false.
+ */
+export function useBajoRendimiento() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => {
+      const n = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
+      return (
+        (n.hardwareConcurrency ?? 8) <= 4 ||
+        (n.deviceMemory ?? 8) <= 4 ||
+        n.connection?.saveData === true
+      );
+    },
+    () => false,
   );
 }
 
